@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Localized AI: the accounting cycle build map</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E📒%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF3EB; --sheet:#FBFCF9; --ink:#17202B; --muted:#55606A; --rule:#C6D2C5;
+  --green:#1E5A43; --green-soft:#DCE8DF; --blue:#2A4B8D; --pencil:#6F7780; --red:#A3352E;
+  --shade:rgba(23,32,43,.45);
+  --b1:#1E5A43;--b2:#2A4B8D;--b3:#6A3D9A;--b4:#8A5A00;--b5:#0F6E7A;--b6:#9A3B2E;
+  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F1714; --sheet:#16211C; --ink:#E6EDE6; --muted:#A2AFA7; --rule:#2D3C34;
+    --green:#7FC8A4; --green-soft:#1D3229; --blue:#A3BCF4; --pencil:#929CA2; --red:#F0958C;
+    --shade:rgba(0,0,0,.6);--b1:#7FC8A4;--b2:#A3BCF4;--b3:#C9A8F0;--b4:#E0B25A;--b5:#6FCFD9;--b6:#F0958C;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F1714; --sheet:#16211C; --ink:#E6EDE6; --muted:#A2AFA7; --rule:#2D3C34;
+  --green:#7FC8A4; --green-soft:#1D3229; --blue:#A3BCF4; --pencil:#929CA2; --red:#F0958C;
+  --shade:rgba(0,0,0,.6);--b1:#7FC8A4;--b2:#A3BCF4;--b3:#C9A8F0;--b4:#E0B25A;--b5:#6FCFD9;--b6:#F0958C;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.wrap{max-width:1480px;margin:0 auto;padding:28px 20px 56px}
+
+/* heading */
+.top{display:flex;flex-wrap:wrap-reverse;justify-content:space-between;align-items:flex-end;gap:14px 28px}
+.top .tt{flex:1;min-width:min(100%,300px)}
+.brand{display:inline-flex;align-items:center;gap:12px;flex:none;margin-left:auto;color:var(--ink)}
+.brand svg{width:46px;height:56px;color:var(--green)}
+.brand b{font-family:var(--serif);font-weight:600;font-size:34px;line-height:1;letter-spacing:-.015em;white-space:nowrap}
+.brand b i{font-style:normal;font-family:var(--sans);font-size:17px;font-weight:600;letter-spacing:.08em;color:var(--green);margin-left:8px;vertical-align:.45em}
+@media (max-width:600px){.brand svg{width:36px;height:44px}.brand b{font-size:27px}.brand b i{font-size:14px}}
+.top h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.2vw,44px);line-height:1.12;margin:0 0 10px;letter-spacing:-.01em}
+.top p{margin:0;max-width:68ch;color:var(--muted);font-size:17px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin:22px 0 8px;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.bar .lab{font-size:14px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden}
+.seg button{background:transparent;border:0;border-left:1px solid var(--ink);padding:7px 13px;font-size:14px;font-weight:500;cursor:pointer;min-height:36px}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.tog{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;cursor:pointer;min-height:36px}
+.tog input{width:18px;height:18px;accent-color:var(--green)}
+.count{font-size:14px;color:var(--muted);margin-left:auto}
+
+/* key */
+.key{display:flex;flex-wrap:wrap;gap:6px 22px;margin:10px 0 26px;font-size:14px;color:var(--muted)}
+.key span b{font-weight:600}
+.ph{display:inline-block;font-size:13px;font-weight:600;line-height:1;padding:4px 7px;border-radius:3px;white-space:nowrap}
+.ph.now{background:var(--green);color:var(--sheet)}
+.ph.next{border:1.5px solid var(--blue);color:var(--blue);padding:2.5px 6px}
+.ph.later{border:1.5px dashed var(--pencil);color:var(--pencil);padding:2.5px 6px}
+
+/* flow */
+.flow{display:grid;grid-template-columns:1fr;gap:0}
+.conn{display:flex;justify-content:center;padding:8px 0;color:var(--green)}
+.conn svg{width:26px;height:26px;transform:rotate(90deg)}
+.fork{display:grid;gap:22px}
+@media (min-width:1100px){
+  .flow{grid-template-columns:minmax(0,1fr) 34px minmax(0,1.15fr) 34px minmax(0,1fr) 34px minmax(0,1.15fr);align-items:start}
+  .conn{padding:26px 0 0}
+  .conn svg{transform:none}
+}
+.stage{background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--green)}
+.stage header{padding:14px 16px 12px;border-bottom:3px double var(--rule)}
+.stage .num{font-family:var(--serif);font-weight:600;font-size:22px;line-height:1.2;margin:0;display:flex;gap:10px;align-items:baseline}
+.stage .num i{font-style:normal;color:var(--green);font-variant-numeric:tabular-nums}
+.stage .sect{font-size:13px;color:var(--green);font-weight:600;margin:2px 0 4px}
+.stage .why{font-size:14px;color:var(--muted);margin:0}
+.grp{font-size:13px;font-weight:600;color:var(--muted);padding:10px 16px 5px;border-bottom:1px solid var(--rule);background:var(--paper)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 62px;align-items:center;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--rule);padding:0;cursor:pointer;min-height:46px;position:relative}
+.row:last-child{border-bottom:0}
+.row .nm{padding:10px 12px 10px 16px;font-size:15.5px;font-weight:500;line-height:1.3}
+.row .pc{align-self:stretch;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--rule)}
+.row:hover{background:var(--green-soft)}
+.row.dim{opacity:.28}
+.row.v1::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green)}
+.row[aria-current="true"]{background:var(--green-soft)}
+
+.base{margin-top:26px;background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--ink)}
+.base header{padding:14px 16px 12px;border-bottom:3px double var(--rule)}
+.base h2{font-family:var(--serif);font-weight:600;font-size:22px;margin:0}
+.base p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.base .rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.base .row{border-bottom:1px solid var(--rule);border-right:1px solid var(--rule)}
+.foot{margin-top:22px;font-size:14px;color:var(--muted);max-width:76ch}
+
+/* detail */
+.shade{position:fixed;inset:0;background:var(--shade);opacity:0;pointer-events:none;transition:opacity .18s;z-index:20}
+.shade.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:21;background:var(--sheet);color:var(--ink);display:flex;flex-direction:column;
+  left:0;right:0;bottom:0;max-height:88%;border-top:3px solid var(--green);transform:translateY(102%);transition:transform .22s ease-out;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet.on{transform:none}
+@media (min-width:820px){
+  .sheet{left:auto;top:0;bottom:0;width:480px;max-height:none;border-top:0;border-left:3px solid var(--green);transform:translateX(102%);padding-top:env(safe-area-inset-top,0px)}
+}
+@media (prefers-reduced-motion: reduce){.sheet,.shade{transition:none}}
+.sheet .hd{display:flex;align-items:flex-start;gap:12px;padding:16px 18px 12px;border-bottom:3px double var(--rule)}
+.sheet .hd div{flex:1;min-width:0}
+.sheet .crumb{font-size:13.5px;color:var(--muted);margin:0 0 4px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sheet h2{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.2;margin:0}
+.x{background:transparent;border:1px solid var(--rule);border-radius:4px;width:40px;height:40px;cursor:pointer;font-size:20px;line-height:1;flex:none}
+.sheet .bd{overflow-y:auto;padding:14px 18px 18px;flex:1}
+.sheet .bd p{margin:0 0 14px;max-width:62ch}
+.sheet h3{font-size:14px;font-weight:600;color:var(--green);margin:18px 0 6px}
+.sheet ul{margin:0 0 6px;padding-left:20px}
+.sheet li{margin:0 0 6px}
+.io{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule)}
+.io div{padding:10px 12px;font-size:15px}
+.io div+div{border-left:1px solid var(--rule)}
+.io b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.note{border-left:3px solid var(--rule);padding:2px 0 2px 12px;color:var(--muted);font-size:15px}
+.note.chk{border-left-color:var(--red)}
+.note.core{border-left-color:var(--green);color:var(--ink)}
+.sheet .ft{display:flex;gap:10px;padding:12px 18px;border-top:1px solid var(--rule)}
+.sheet .ft button{flex:1;min-width:0;background:transparent;border:1px solid var(--ink);border-radius:4px;padding:9px 10px;font-size:14px;font-weight:500;cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet .ft button:last-child{text-align:right}
+.sheet .ft button:disabled{opacity:.35;cursor:default}
+
+/* flow chart view */
+.shapes{display:flex;flex-wrap:wrap;gap:6px 22px;margin:-14px 0 22px;font-size:14px;color:var(--muted)}
+.shapes i{display:inline-block;vertical-align:middle;width:26px;height:14px;margin-right:6px;border:2px solid var(--ink)}
+.shapes i.s1{border-radius:999px}.shapes i.s2{border-radius:2px;border-top-width:5px}.shapes i.s3{border-radius:4px;border:1.5px solid var(--muted);background:var(--paper)}
+.chart{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:12px;row-gap:34px;max-width:960px;margin:0 auto;align-items:center;padding:0 14px}
+@media (min-width:700px){.chart{column-gap:56px;row-gap:38px;padding:0 44px}}
+.chart>svg{position:absolute;left:0;top:0;z-index:0;pointer-events:none;overflow:visible}
+.chart>svg path{fill:none;stroke:var(--muted);stroke-width:1.6}
+.chart>svg path.dash{stroke-dasharray:5 5}
+.chart>svg .ah{fill:var(--muted)}
+.chart>svg text{font-family:var(--sans);font-size:12px;fill:var(--muted);paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
+.chart>*:not(svg){position:relative;z-index:1}
+.cap{grid-column:1 / -1;font-family:var(--serif);font-weight:600;font-size:18px;border-top:1px solid var(--rule);padding-top:8px;margin-top:6px;display:flex;gap:10px;align-items:baseline;align-self:end}
+.cap i{font-style:normal;color:var(--green)}
+.cap small{font-family:var(--sans);font-weight:500;font-size:13px;color:var(--muted)}
+.bub{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:46px;padding:8px 8px;text-align:center;font-size:13.5px;font-weight:600;line-height:1.25;cursor:pointer;border-radius:24px;background:var(--sheet);border:2px solid var(--ink)}
+@media (min-width:700px){.bub{font-size:15px;min-height:52px;padding:10px 14px;border-radius:28px}}
+.bub small{font-size:11.5px;font-weight:500;opacity:.85}
+.bub.now{background:var(--green);border-color:var(--green);color:var(--sheet)}
+.bub.next{border-color:var(--blue)}
+.bub.later{border:2px dashed var(--pencil)}
+.bub.store{border-radius:3px;border-top-width:7px}
+.bub.store.later{border-top-style:solid}
+.bub:hover{filter:brightness(.96)}
+.bub.dim{opacity:.25}
+.bub[aria-current="true"]{outline:3px solid var(--ink);outline-offset:2px}
+.ext{display:flex;align-items:center;justify-content:center;min-height:40px;padding:6px 8px;text-align:center;font-size:13px;font-weight:500;color:var(--muted);background:var(--paper);border:1.5px solid var(--muted);border-radius:4px}
+.gbox{align-self:stretch;background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--green);padding:8px 8px 10px}
+@media (min-width:700px){.gbox{padding:12px 14px 14px}}
+.gbox h3{font-family:var(--serif);font-weight:600;font-size:17px;margin:0 0 8px;display:flex;gap:8px;align-items:baseline}
+.gbox h3 i{font-style:normal;color:var(--green)}
+.gbox .in{display:grid;gap:8px}
+.gbox .in.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gbox .in .wide{grid-column:1 / -1}
+.sheet .bd p.gl{margin:12px 0 6px;font-size:14.5px;font-weight:600}
+.lnk{display:inline;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:var(--green);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+table.sch{width:100%;border-collapse:collapse;font-size:14.5px;margin:0 0 6px}
+table.sch td{border-top:1px solid var(--rule);padding:7px 8px 7px 0;vertical-align:top}
+table.sch td.k{color:var(--muted);font-size:13px;white-space:nowrap}
+table.sch td.t{text-align:right;white-space:nowrap;padding-right:0}
+.for{color:var(--muted);font-size:13.5px}
+/* template markers */
+.rw{position:relative;border-bottom:1px solid var(--rule)}
+.rw .row{border-bottom:0}
+.rw .row .nm{padding-right:46px}
+.tp{position:absolute;z-index:2;width:30px;height:30px;border-radius:50%;background:var(--sheet);border:1px solid var(--rule);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.tp:hover{border-color:var(--green)}
+.rw .tp{right:70px;top:50%;transform:translateY(-50%)}
+.bw{position:relative}
+.bw .tp{top:-12px;right:-8px}
+.exbtn{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:9px 12px;margin:0 0 6px;cursor:pointer;font-size:15px;font-weight:500}
+.exbtn:hover{border-color:var(--green)}
+/* templates view */
+.tnote{font-size:15px;color:var(--muted);max-width:76ch;margin:0 0 14px}
+.tidx{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.tidx button{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:7px 11px;font-size:14px;font-weight:500;cursor:pointer}
+.tidx button:hover{border-color:var(--green)}
+.tpl{background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--green);margin:0 0 26px;scroll-margin-top:12px}
+.tpl>header{padding:14px 16px 12px;border-bottom:3px double var(--rule)}
+.tpl h2{font-family:var(--serif);font-weight:600;font-size:22px;line-height:1.2;margin:0 0 4px}
+.tpl .meta{font-size:14px;color:var(--muted);margin:0 0 4px}
+.tpl .des{font-size:15px;margin:0;max-width:76ch}
+.tpl .ex{padding:16px;overflow-x:auto}
+table.tb{border-collapse:collapse;font-size:14px;min-width:760px;width:100%}
+table.tb th{text-align:left;font-size:13px;font-weight:600;color:var(--muted);padding:6px 12px 6px 0;border-bottom:2px solid var(--ink);white-space:nowrap}
+table.tb td{padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.tb td.nw{white-space:nowrap}
+table.tb tr.cl td{color:var(--muted)}
+.st{display:inline-block;font-size:12.5px;font-weight:600;line-height:1;padding:4px 7px;border-radius:3px;white-space:nowrap}
+.st.ok{background:var(--green);color:var(--sheet)}
+.st.out{border:1.5px solid var(--blue);color:var(--blue);padding:2.5px 6px}
+.st.q{border:1.5px solid var(--red);color:var(--red);padding:2.5px 6px}
+.st.ap{border:1.5px dashed var(--pencil);color:var(--pencil);padding:2.5px 6px}
+.sum{font-size:14px;color:var(--muted);margin:12px 0 0}
+.mail{max-width:660px;border:1px solid var(--rule);background:var(--paper)}
+.mail dl{margin:0;padding:10px 14px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:70px 1fr;gap:3px 8px;font-size:14px}
+.mail dt{color:var(--muted)}.mail dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.mail dd.sj{font-weight:600}
+.mail .mb{padding:14px;font-size:15px;line-height:1.55}
+.mail .mb p{margin:0 0 12px}.mail .mb ol,.mail .mb ul{margin:0 0 12px;padding-left:22px}.mail .mb li{margin:0 0 5px}
+.fakebtn{display:inline-block;background:var(--green);color:var(--sheet);font-weight:600;font-size:15px;padding:9px 14px;border-radius:4px}
+.fakebtn.alt{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.survey{max-width:580px;border:1px solid var(--rule);background:var(--paper);padding:16px}
+.survey h3{font-family:var(--serif);font-size:19px;margin:0 0 2px}
+.survey .sm{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+.survey fieldset{border:0;border-top:1px solid var(--rule);margin:0;padding:12px 0}
+.survey legend{font-weight:600;font-size:15px;padding:0}
+.survey label{display:inline-flex;align-items:center;gap:6px;margin:8px 16px 0 0;font-size:15px}
+.survey input[type=text]{display:block;width:100%;margin-top:8px;padding:8px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet);color:var(--ink);font:inherit;font-size:14px}
+.survey .hint{font-size:13.5px;color:var(--muted);margin:6px 0 0}
+.card{max-width:580px;border:1px solid var(--rule);background:var(--paper);padding:16px}
+.card dl{margin:0 0 14px;display:grid;grid-template-columns:110px 1fr;gap:8px 10px;font-size:15px}
+.card dt{color:var(--muted);font-size:14px}.card dd{margin:0}
+.card .acts{display:flex;flex-wrap:wrap;gap:8px}
+/* firm view */
+.fnote{font-size:15px;color:var(--muted);max-width:80ch;margin:0 0 14px}
+.fapp{background:var(--sheet);border:1px solid var(--rule);border-top:3px solid var(--ink)}
+.fhead{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;padding:12px 16px;border-bottom:1px solid var(--rule)}
+.fhead b{font-family:var(--serif);font-size:20px}
+.fhead span{font-size:14px;color:var(--muted)}
+.fhead button{margin-left:auto}
+.ftabs{display:flex;overflow-x:auto;border-bottom:3px double var(--rule)}
+.ftabs button{flex:none;background:transparent;border:0;border-right:1px solid var(--rule);padding:11px 15px;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap}
+.ftabs button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.ftabs button i{font-style:normal;font-size:12.5px;font-weight:600;margin-left:6px;padding:1px 6px;border-radius:9px;background:var(--red);color:var(--sheet)}
+.fbody{padding:16px}
+.fbody h3{font-family:var(--serif);font-size:18px;margin:0 0 8px}
+.fbody h3+p.sub{margin:-4px 0 10px;font-size:14px;color:var(--muted)}
+.behind{font-size:14px;color:var(--muted);margin:0 0 16px}
+.behind .lnk{font-size:14px;margin-right:10px}
+.fgrid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.fgrid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.fc{border:1px solid var(--rule);background:var(--paper);padding:14px;min-width:0}
+.fc .top{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;margin:0 0 6px}
+.fc .top b{font-size:16.5px}
+.fc .top span{font-size:14px;color:var(--muted)}
+.fc .acts,.frow .acts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.fb{background:var(--green);color:var(--sheet);border:1px solid var(--green);border-radius:4px;padding:7px 11px;font-size:14px;font-weight:600;cursor:pointer}
+.fb.alt{background:transparent;color:var(--ink);border-color:var(--ink);font-weight:500}
+.fb.sm{padding:4px 8px;font-size:13px}
+.fx{overflow-x:auto}
+.fx table.tb{min-width:560px}
+.flist{list-style:none;margin:0;padding:0}
+.flist li{padding:9px 0;border-top:1px solid var(--rule);font-size:15px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.flist li:first-child{border-top:0}
+.flist .w{color:var(--muted);font-size:13.5px;white-space:nowrap;min-width:92px}
+.flist .g{flex:1;min-width:180px}
+.dir{font-size:12.5px;font-weight:600;padding:2px 6px;border-radius:3px;border:1px solid var(--rule);white-space:nowrap}
+.dir.in{background:var(--green-soft)}
+.ff{margin:10px 0 0;padding:12px;border:1px dashed var(--pencil);display:grid;gap:8px}
+.ff label{font-size:13.5px;color:var(--muted);display:grid;gap:3px}
+.ff input,.ff select,.fsel{padding:8px;border:1px solid var(--rule);border-radius:4px;background:var(--sheet);color:var(--ink);font:inherit;font-size:15px;max-width:100%}
+.ff .acts{margin:2px 0 0}
+.ffil{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;align-items:center;font-size:14px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:4px;font-size:14.5px;max-width:min(92vw,560px);z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+/* builds */
+.b0{--bc:var(--pencil)}.bch.b0{border-style:dashed}.bub.b0{border:2px dashed var(--pencil)}
+.b1{--bc:var(--b1)}.b2{--bc:var(--b2)}.b3{--bc:var(--b3)}.b4{--bc:var(--b4)}.b5{--bc:var(--b5)}.b6{--bc:var(--b6)}
+.bch{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 6px;border-radius:12px;font-size:13px;font-weight:600;line-height:1;border:1.5px solid var(--bc);color:var(--bc);background:var(--sheet);white-space:nowrap;font-style:normal}
+.bch.b1{background:var(--bc);color:var(--sheet)}
+.bts{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+.bbtn{display:inline-flex;align-items:center;gap:8px;background:var(--sheet);border:1.5px solid var(--rule);border-radius:4px;padding:6px 11px 6px 7px;font-size:14px;font-weight:500;cursor:pointer;min-height:38px}
+.bbtn small{color:var(--muted);font-size:12.5px}
+.bbtn[aria-pressed="true"]{border-color:var(--bc,var(--ink));box-shadow:inset 0 0 0 1.5px var(--bc,var(--ink))}
+.bbtn.all{padding-left:11px}
+.bdesc{margin:0 0 24px;font-size:14.5px;color:var(--muted);max-width:86ch}
+.bdesc b{color:var(--ink);font-weight:600}
+.bdesc span{display:block;margin:0 0 3px}
+.bub{position:relative}
+.bub.b1{background:var(--b1);border-color:var(--b1);color:var(--sheet)}
+.bub.b2,.bub.b3,.bub.b4,.bub.b5,.bub.b6{border-color:var(--bc)}
+.bub .bn{position:absolute;left:-9px;top:-11px;z-index:2}
+.gbox .bub .bn{left:-6px;top:-9px;min-width:20px;height:20px;font-size:12px}
+.ftabs button em{font-style:normal;font-size:12px;font-weight:600;margin-left:6px;opacity:.75}
+.ftabs button.off{opacity:.4}
+.bwarn{border-left:3px solid var(--red);padding:2px 0 2px 12px;margin:0 0 14px;font-size:15px}
+.behind .bch{margin-right:6px}
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="tt">
+    <h1>The accounting cycle, end to end</h1>
+    <p>A build map of every piece we could automate with local AI, from the client’s first email to the tax return and the advice that follows. Choose any line to see what it involves and what we could build.</p>
+    </div>
+    <div class="brand" role="img" aria-label="Localized AI">
+      <svg viewBox="0 0 48 58" fill="none" aria-hidden="true"><path d="M24 56C24 56 5 37.5 5 22.5a19 19 0 1 1 38 0C43 37.5 24 56 24 56Z" fill="currentColor"/><g stroke="var(--paper)" stroke-width="2.3" stroke-linecap="round"><path d="M24 13.5L15.5 28M24 13.5L32.5 28M15.5 28h17"/></g><g fill="var(--paper)"><circle cx="24" cy="13.5" r="3.9"/><circle cx="15.5" cy="28" r="3.9"/><circle cx="32.5" cy="28" r="3.9"/></g></svg>
+      <b>Localized<i>AI</i></b>
+    </div>
+  </div>
+
+  <div class="bar">
+    <span class="lab" id="vwl">View</span>
+    <div class="seg" role="group" aria-labelledby="vwl" id="views">
+      <button data-v="ledger" aria-pressed="true">Ledger</button>
+      <button data-v="flow" aria-pressed="false">Flow chart</button>
+      <button data-v="templates" aria-pressed="false">Templates</button>
+      <button data-v="firm" aria-pressed="false">Firm view</button>
+    </div>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="bts" id="builds" role="group" aria-label="Builds"></div>
+  <p class="bdesc" id="bdesc"></p>
+
+  <div class="flow" id="flow"></div>
+  <div id="flowview" hidden>
+    <div class="shapes"><span><i class="s1"></i>a step</span><span><i class="s2"></i>a folder of data</span><span><i class="s3"></i>outside the system</span><span>Dashed line: a later or alternative path</span><span>Lines running back up: chasing what is missing, and approved changes to the list</span></div>
+    <div class="chart" id="chart"></div>
+  </div>
+
+  <div id="tplview" hidden>
+    <p class="tnote">Worked examples of what each step would produce or send. Clients, people and account numbers are made up. Text in [square brackets] is filled in by the firm. A 📄 on a step in the ledger or flow chart opens its example here.</p>
+    <div class="tidx" id="tidx"></div>
+    <div id="tlist"></div>
+  </div>
+  <div id="firmview" hidden>
+    <p class="fnote">A working sketch of the screen the bookkeeping firm would use to see and steer everything. The buttons work on made-up data: try approving a change or sending a reminder, then look at Messages and the Audit log. Choose build 1 above to see the single screen that build delivers. Nothing is really sent, and it resets when the page reloads.</p>
+    <div class="fapp">
+      <div class="fhead"><b>[Firm name]</b><span>October 2026 books. Today is Friday 13 November 2026.</span><button class="fb alt sm" data-act="reset">Reset the example</button></div>
+      <div class="ftabs" role="tablist" id="ftabs"></div>
+      <div class="fbody" id="fbody"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <section class="base" id="basesec" aria-labelledby="bh">
+    <header><h2 id="bh">Underneath every stage</h2><p>The machine, the records and the controls that all five stages rely on.</p></header>
+    <div class="rows" id="base"></div>
+  </section>
+
+  <p class="foot">Drawn from one conversation with an accounting and bookkeeping firm, recorded and roughly transcribed. Anything marked “heard from the firm” is as we understood it and should be confirmed, especially figures.</p>
+</div>
+
+<div class="shade" id="shade"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="dt" aria-hidden="true">
+  <div class="hd"><div><p class="crumb" id="dc"></p><h2 id="dt"></h2></div><button class="x" id="dx" aria-label="Close">×</button></div>
+  <div class="bd" id="db"></div>
+  <div class="ft"><button id="dp"></button><button id="dn"></button></div>
+</aside>
+
+<script>
+const STAGES=[
+ {id:'capture',n:1,name:'Capture',sect:'Bookkeeping',why:'Get the client’s source documents in, sorted and findable.'},
+ {id:'process',n:2,name:'Process',sect:'Bookkeeping',why:'Turn documents into coded transactions in the books.'},
+ {id:'report',n:3,name:'Report',sect:'Bookkeeping',why:'Turn the books into statements someone can rely on.'},
+ {id:'comply',n:4,name:'Comply',sect:'Tax and regulatory',why:'Use the reported numbers for SARS and CIPC.',from:'Fed by stage 3, Report'},
+ {id:'advise',n:5,name:'Advise',sect:'Advisory',why:'Help the client understand and act on the numbers.',from:'Also fed by stage 3, Report'},
+ {id:'base',n:0,name:'Underneath every stage',sect:'Foundation',why:''}
+];
+const N=[
+/* ---------- 1 CAPTURE ---------- */
+{id:'account-register',s:'capture',g:'Know what to expect',p:'now',v1:1,t:'Client and account list (Master List)',
+ small:'One sheet: the client, the email addresses they send from, each bank account with its last four digits, the matching Sage bank account and the statement password. No evidence lists, schedules or questions yet.',
+ what:'The master list the whole cycle starts from: every client, every bank account and credit card they hold, and the evidence the firm needs from them each period.',
+ build:['A list of clients, with the email addresses each one sends documents from','Every bank account and credit card per client: bank, type and last four digits','The matching Sage bank account for each account','The statement password where there is one, stored locally and encrypted','Opened and closed dates, so a closed account is no longer expected','B2|The evidence required per client and per period: which statements, plus any invoices, slips or schedules',['B2|How often each item is due, per client. See the request schedule','request-schedule'],'B2|The standing questions that apply to each client, for the periodic check-in','B2|Kept up to date from what clients tell us by email, after a person approves each change','B2|A quarterly review pack for a person: every change since the last review, accounts with nothing received, and anything that looks out of date','B2|The review signed off by a named person and recorded in the audit trail','B6|A tax profile and company register for each client'],
+ extra:{h:'Evidence to request, by build',groups:[
+  {b:1,items:[['Bank statements for every account, each period','Statement to spreadsheet'],['Credit card statements','Statement to spreadsheet']]},
+  {b:2,items:[['Supplier invoices and slips','Slips and invoices']]},
+  {b:3,items:[['Invoices for assets bought, and loan or finance agreements','External journals']]},
+  {b:4,items:[['Lists of what customers owe and what is owed to suppliers','Reports'],['Year-end stock count','Annual financial statements']]},
+  {b:6,items:[['Sales invoices, or a sales report','VAT returns'],['Payroll reports','PAYE returns'],['Tax certificates, such as medical aid and retirement annuity','Income tax returns'],['Company documents when directors or shareholders change','CIPC and company secretarial']]}]},
+ inn:'The firm’s client list and each client’s accounts',out:'A checklist of exactly what is due, per client and per period',
+ check:'A person sets up and approves each client’s list. From build 2, every quarter a person also reconciles the whole list: the accounts, the evidence required and the schedule, against what actually arrived and what changed.',
+ heard:'Statement passwords would never need to be typed into a website, because nothing leaves the office.',
+ ask:'Where does this list live today: in Sage, in a spreadsheet or in people’s heads?'},
+{id:'request-schedule',s:'capture',g:'Know what to expect',p:'next',t:'Request schedule',
+ what:'Built from the client and account list: one schedule that says what the firm asks each client for, and how often. Documents and questions share the same calendar, so a client gets one sensible message at a time.',
+ build:['A default schedule the firm sets once','Changes per client: a client who brings everything quarterly is not asked monthly','Requests and check-in questions sent automatically on their due dates','Items that fall due together combined into one message','Items switched on only when the build that uses them goes live','A calendar of what goes out to whom, and when'],
+ sched:[
+  {when:'Every month',items:[['Bank statements, every account',1,'Document'],['Credit card statements',1,'Document'],['Supplier invoices and slips',2,'Document'],['Cash income or expenses outside the bank',3,'Question'],['What customers owe and what is owed to suppliers',4,'Document'],['Sales invoices, or a sales report',6,'Document'],['Payroll reports',6,'Document']]},
+  {when:'Every two months',items:[['Bank account and credit card confirmation',2,'Question']]},
+  {when:'Every quarter',items:[['Assets bought or sold, with the invoices',3,'Question'],['New or settled loans and finance, with the agreements',3,'Question'],['Money owners put in or took out',3,'Question'],['Staff joined, left or changed pay',6,'Question']]},
+  {when:'Twice a year',items:[['New or changed VAT or PAYE registration',6,'Question'],['Changes in directors, shareholders or address',6,'Question']]},
+  {when:'At year-end',items:[['Loan and finance statements',3,'Document'],['Stock count',4,'Document'],['Tax certificates, such as medical aid and retirement annuity',6,'Document']]}],
+ inn:'The client and account list',out:'Dated requests and questions for each client',
+ check:'The firm sets the default rhythm. A bookkeeper can change it for any client.',
+ ask:'These rhythms are a starting point. Which match how the firm works today, and should VAT clients follow their VAT periods instead?'},
+{id:'client-requests',s:'capture',g:'Ask the client',p:'next',t:'Requests and reminders',
+ what:'Each period the system emails every client a request for the specific items on their list, naming each account and the period needed, and keeps chasing what has not arrived.',
+ build:['Request emails that name each account and item: “cheque account ending 1234, October statement”',['A request schedule per client: what is needed and by when. See the request schedule','request-schedule'],'Requests that leave out anything the client has already sent','Reminders that list only what is still missing','An outstanding list per client and per period','Later: reminders by WhatsApp'],
+ inn:'The client and account list',out:'Specific requests sent; an outstanding list',
+ check:'The firm sets the wording and timing once. Staff see the outstanding list.',
+ heard:'Some clients bring everything in once a year. With spare capacity the firm could ask for it every month or two instead.'},
+{id:'account-confirmation',s:'capture',g:'Ask the client',p:'next',t:'Periodic client check-in',
+ what:'From time to time the system sends each client the bank accounts and credit cards the firm holds for them and asks whether the list is still right. In the same message it asks the standing questions a bookkeeper needs answered: assets bought, loans taken out and anything else that changes the books. The client can answer by email or through a quick survey link.',
+ build:['A periodic check-in email showing the accounts on file, with a short set of questions','A quick survey the AI builds for each client, pre-filled with their accounts and only the questions that apply to them','The client’s choice: reply to the email in their own words, or tap the survey link','Email replies and survey answers treated the same way once they arrive','A simple reply: nothing has changed, or what has','A question set per client, so nobody is asked what does not apply to them',['Different rhythms: some questions monthly, some quarterly, some only at year-end. See the request schedule','request-schedule'],'Questions switched on only when the build that uses the answer goes live','New accounts added and closed accounts retired, through the list changes queue','Each answer sent to the stage that needs it: journals, payroll, VAT or CIPC','A request for the supporting document whenever the answer is yes','A prompt when transactions point to an account that is not on the list, such as transfers to an unknown account','News a client sends unprompted, such as a new account, handled the same way as a check-in answer','A record of when each client last confirmed'],
+ extra:{h:'What it asks the client, by build',groups:[
+  {b:2,items:[['Bank accounts and credit cards: any opened or closed?','Client and account list']]},
+  {b:3,items:[['Cash: any income or expenses that did not go through the bank, including business costs paid personally?','Bank rules and coding'],['Assets: anything bought or sold, such as vehicles, equipment or property?','External journals'],['Loans and finance: any new loan, vehicle finance, lease or overdraft, or any settled?','External journals'],['Owners: any money put into the business or taken out?','Ledger']]},
+  {b:4,items:[['Customers and suppliers: what is owed to you and what do you owe at period end?','Reports'],['Year-end: stock count','Annual financial statements']]},
+  {b:6,items:[['Staff: anyone joined or left, or any change in pay?','PAYE returns'],['Registrations: any new or changed VAT or PAYE registration?','VAT and PAYE returns'],['Company details: any change in directors, shareholders or address?','CIPC and company secretarial'],['Year-end: tax certificates such as medical aid and retirement annuity','Income tax returns']]}]},
+ inn:'The client and account list, and the question set for that client',out:'A confirmed, up-to-date list; changes passed to the stage that needs them',
+ check:'A person approves every change to the list and reviews any answer that affects the books.',
+ ask:'How often should each question be asked, and which questions does the firm already ask its clients today? A survey link must be reachable from outside the office: where is it hosted, and how much client detail may it show?'},
+{id:'mailbox-reader',s:'capture',g:'Receive and file',p:'now',v1:1,t:'Mailbox reader',
+ small:'Read-only. Pick up PDF attachments from known senders and pass them on. Anything from an unknown sender goes on a short list. No reading of the message text yet.',
+ what:'A local AI watches the firm’s mailbox, works out which client each email is from, reads what the client wrote, pulls out the attachments and leaves the email unread for the humans. It accepts documents at any time, not only after a request.',
+ build:['A read-only connection to the mailbox','Rules that match a sender to a client','Attachment extraction, including password-protected PDFs','Documents accepted whenever they arrive, not only after a request','Anything from an unknown sender held on a short list for a person','A log of every email read and what was taken from it','B2|The message itself read for news, such as a new account, a closed account or a new contact','B2|Each piece of news sent to the list changes queue as a proposed update'],
+ inn:'Incoming client emails',out:'Attachments, tagged with client and date',
+ check:'Emails it cannot match to a client go on a short list for a person to assign.',
+ heard:'Almost all clients simply email their bank statements. A few also send invoices or lists of creditors.',
+ ask:'Which mail system does the firm use, and will one shared mailbox or each person’s inbox be read?'},
+{id:'slips-and-invoices',s:'capture',g:'Receive and file',p:'next',t:'Slips and invoices',
+ what:'Photos and scans of slips and invoices are read with image recognition, and the supplier, date, VAT and amount are lifted out.',
+ build:['A way for clients to send photos: a dedicated mailbox or phone upload','Extraction of supplier, date, VAT number, VAT and total','Matching each slip to its bank transaction','A VAT-invoice validity check'],
+ inn:'Photos and PDFs of slips and invoices',out:'Structured lines, linked to bank transactions',
+ check:'Poor photos and handwriting are flagged, not guessed.',
+ heard:'Slips tend to arrive in a container near year-end and are often summarised into one line.'},
+{id:'sort-and-file',s:'capture',g:'Receive and file',p:'now',v1:1,t:'Sort and file',
+ small:'Recognise a bank statement, work out the client, account and month, rename it and save it in the client’s folder. Anything else is filed untouched.',
+ what:'Every document is recognised by type (bank statement, invoice, slip, SARS letter), renamed consistently and saved into the right client folder.',
+ build:['Recognition of bank statements','Each statement matched to the client, account and month it covers','A naming convention applied to every file','A standard folder per client, by year and month','Duplicate detection, so the same statement is not processed twice','B2|Recognition of other document types: invoices, slips and SARS letters','B2|Folder rules the firm sets itself: “this goes here”'],
+ inn:'Tagged attachments',out:'Named files in client folders',
+ check:'Documents it is unsure about are held for a person to confirm.',
+ heard:'How long it takes to find a document today depends on whether it was saved to the server or left in someone’s email.'},
+{id:'client-folders',s:'capture',g:'Receive and file',p:'now',v1:1,flowOnly:1,t:'Client folders',
+ what:'Where every sorted document lives: one folder per client, organised by year and month. The search and every later step work from here.',
+ build:['A standard folder structure per client','Storage on the firm’s own machine or server','Backups','Rules for how long documents are kept'],
+ inn:'Named, sorted documents',out:'One organised store per client',check:''},
+{id:'receipt-check',s:'capture',g:'Check and respond',p:'next',t:'Received against requested',
+ what:'Once documents are sorted, each one is checked: is it what was asked for, is it complete and readable, and does it belong to an account on the list? Good documents go on to the client folders. Problems go back to the client, and anything that changes the list goes to a person to approve.',
+ build:['Each document matched to its client, account and period','The outstanding list updated automatically as documents arrive','Documents sent early ticked off, so the month-end request skips them','Follow-up emails that name the specific account or item still missing','Wrong period, missing pages or the wrong account caught and queried','A statement for an account that is not on the list flagged as a possible new account','A status per client: complete, partly received or nothing received'],
+ inn:'Sorted documents and the outstanding list',out:'Checked documents passed on; an updated outstanding list; problems and news routed onwards',
+ check:'Staff see who is complete and who is not. A person can stop or reword a follow-up.'},
+{id:'client-replies',s:'capture',g:'Check and respond',p:'next',t:'Replies to the client',
+ what:'Every time a client sends something, the system answers: a short acknowledgement of what was received, and a clear query when something is wrong or missing.',
+ build:['An acknowledgement for every submission: “Received, thank you”, listing what arrived','What is still outstanding, included in the same reply','A drafted query when something is wrong: the wrong period, missing pages, an unreadable scan or a missing password','A thank-you when a client tells us about a change, saying what was updated','Wording and tone set once by the firm','One reply, not several, when a client sends a string of emails'],
+ inn:'The result of the receipt check',out:'An acknowledgement or a query in the client’s inbox',
+ check:'Acknowledgements can go out automatically. Queries are drafted for a person to approve until the firm trusts them.',
+ ask:'Should replies come from a shared address or from the bookkeeper who owns the client? Sending also needs permission to write to the mailbox, not only read it.'},
+{id:'list-changes',s:'capture',g:'Check and respond',p:'next',t:'List changes to approve',
+ what:'Everything that could change the client and account list lands in one queue: news a client emailed, check-in and survey answers, and accounts the system spotted that are not on the list. A person approves each change before the list is updated.',
+ build:['One queue of proposed changes per client','Each change shown with its source: the email, the survey answer or the statement','Approve, edit or reject','The list, the schedule and the next request updated the moment a change is approved','A history of every change and who approved it'],
+ inn:'News from emails, check-in answers and accounts not on the list',out:'An up-to-date client and account list',
+ check:'A person approves every change. Nothing updates the list on its own. Each quarter the same person, or a manager, reconciles all the changes made against the master list.',
+ ask:'Would the firm let low-risk changes, such as a new contact email, update automatically?'},
+{id:'document-search',s:'capture',g:'Find it again',p:'next',t:'Document search',
+ what:'Everything the firm holds becomes searchable in plain language, across the server and email.',
+ build:['An index of every filed document','Plain-language search: “the March statement for this client”','Answers that link to the source page','Access set per staff member'],
+ inn:'Filed documents',out:'The document, or the answer with its source',
+ check:'Search only shows what that staff member is allowed to see.'},
+
+/* ---------- 2 PROCESS ---------- */
+{id:'statement-to-csv',s:'process',g:'Reading the statement',p:'now',v1:1,t:'Statement to spreadsheet',
+ small:'Start here, before the mailbox: drop a downloaded statement PDF into a folder and get a file in Sage’s layout out, with no person involved. Begin with the two or three banks the firm sees most.',
+ what:'A statement PDF goes in and a spreadsheet (CSV) file in Sage’s layout comes out, automatically. Statements downloaded from online banking already contain the real text and figures, so ordinary code lifts them out exactly. AI reading is needed only for scanned or photographed pages.',
+ build:['A converter for downloaded statements that copies the text and figures exactly, with no AI reading involved','One layout per bank, starting with the two or three the firm sees most','Multi-page and multi-account statements','Output written straight into the layout Sage Desktop imports, once that is confirmed','X|AI reading for scanned and photographed statements, and for bank layouts not yet set up','X|A confidence score on each line of a scanned statement'],
+ inn:'Bank statement PDFs',out:'One CSV of transactions per statement, in Sage’s layout',
+ check:'None when the checks pass: the file goes straight through. A person is involved only when a check fails.',
+ heard:'The firm already uses a paid tool for this, charged per page, which cut capturing a large client from about half a day to under half an hour. Ours would run locally with no per-page charge.'},
+{id:'statement-checks',s:'process',g:'Reading the statement',p:'now',v1:1,t:'Reconciliation checks',
+ small:'Automatic. Every line is proved against the running balance printed on the statement, and opening balance plus movements must equal the closing balance. If it all proves, the file goes through untouched.',
+ what:'The automatic gate that does the checking a person would otherwise do. Bank statements print a running balance after each transaction, so the system can prove every line: the previous balance plus this amount must equal the balance printed next to it.',
+ build:['Line-by-line proof against the running balance','Opening balance plus movements equals closing balance','Files that prove go straight through, with no one involved','When a line fails, that exact line is shown to a person next to the page it came from','Page and date continuity, to catch missing pages','Gap detection between one month’s statement and the next'],
+ inn:'CSV and the original statement',out:'A proved CSV that goes straight on, or the one line that failed',
+ check:'Only on a failure. A person sees the line that did not prove, fixes it or asks the client for a better copy, and the file is proved again.',
+ ask:'Do all the firm’s banks print a running balance on every line? Any that do not fall back to the opening-to-closing check alone.'},
+{id:'csv-folder',s:'process',p:'now',v1:1,flowOnly:1,t:'CSV folder',
+ what:'Where the proved spreadsheet files wait, one per statement. Both routes start here: upload into the accounting package, or our own bookkeeping engine.',
+ build:['One proved CSV per statement, named by client, bank and period','A status on each file: waiting, uploaded or processed','The original statement kept alongside it'],
+ inn:'Proved CSV files',out:'Files ready for either route',check:''},
+{id:'push-to-sage',s:'process',g:'Route A: their accounting software',p:'now',v1:1,t:'Push into Sage Desktop',
+ small:'Produce the file in the layout Sage imports and put it in a folder. The bookkeeper imports it by hand, as they do today.',
+ what:'The proved CSV is put into the format the firm’s desktop accounting software imports, so its existing bank rules do the coding.',
+ build:['The import format for Sage Desktop, once we know exactly what it accepts','A per-client mapping to the right Sage bank account, taken from the master list','The finished file placed in a folder for the bookkeeper to import by hand','X|A guided or automatic import into Sage','X|A record that the import happened and balanced'],
+ todo:['Which file types Sage Desktop accepts for a bank statement import','The exact layout it expects: column order, date format, and how money in and money out are shown','Whether each bank account needs its own file, and any limit on file size or number of lines','How the import is started: a menu a person clicks through, or something we can automate','What Sage does with duplicates if the same statement is imported twice','A copy of the file the firm’s current tool produces, as a working example to match'],
+ inn:'Proved CSV',out:'Transactions in the client’s Sage file',
+ check:'The bookkeeper reviews the coded transactions in Sage as they do today.',
+ heard:'Setting up the rules for a client took about an hour the first time; after that the monthly job is quick.',
+ ask:'Exactly which Sage product is it, and does it run only on Windows?'},
+{id:'other-platforms',s:'process',g:'Route A: their accounting software',p:'next',t:'Xero, QuickBooks and others',
+ small:'Not part of build 1. The same checked file can be reshaped for another package once Sage is working.',
+ what:'The same proved CSV, shaped for other accounting packages, so the first product works for more firms.',
+ build:['Export formats for Xero and QuickBooks','A choice of package per client','Reading reports back out of each package'],
+ inn:'Proved CSV',out:'Transactions in the client’s chosen package',
+ check:'As with Sage: the bookkeeper reviews the result in the package.'},
+{id:'rules-engine',s:'process',g:'Route B: our own bookkeeping engine',p:'next',t:'Bank rules and coding',
+ what:'Our own engine codes each transaction. It starts from the bank rules already in Sage or QuickBooks, and the AI suggests an account and VAT code for anything the rules miss.',
+ build:['Import of existing bank rules','A rule editor in plain language','AI suggestions for unmatched lines, each with a confidence score','Learning from every correction a person makes'],
+ inn:'Proved transactions and the client’s rules',out:'Coded transactions',
+ check:'Anything below the confidence threshold goes to the exceptions queue.',
+ heard:'The firm’s idea of a threshold was around 95 per cent: above it, code automatically; below it, ask a person.'},
+{id:'exceptions-queue',s:'process',g:'Route B: our own bookkeeping engine',p:'next',t:'Exceptions queue',
+ what:'The bookkeeper sees only the transactions that need judgement, allocates them, and approves the batch.',
+ build:['One queue of uncertain items per client','Allocate, split or query a line','Approve the batch under a named person','A count of how much was coded automatically'],
+ inn:'Coded transactions with uncertain lines',out:'An approved, fully coded batch',
+ check:'This step is the human involvement for processing: a person allocates and approves.'},
+{id:'external-journals',s:'process',g:'Route B: our own bookkeeping engine',p:'later',t:'External journals',
+ what:'Entries that do not come from a bank statement: payroll journals, depreciation, year-end adjustments and the accountant’s own corrections. They join the ledger alongside the coded bank transactions.',
+ build:['Import of journals from payroll and other systems','A journal entry screen with approval','Recurring journals, such as depreciation','Draft journals for asset purchases and new loans reported in the client check-in','A template for year-end adjustments'],
+ inn:'Journals from payroll, the accountant or other systems',out:'Posted journal entries in the ledger',
+ check:'Every journal is approved by a named person before it posts.'},
+{id:'own-ledger',s:'process',g:'Route B: our own bookkeeping engine',p:'later',t:'Ledger, journals and trial balance',
+ what:'A full set of books held by our system: chart of accounts, journal entries, accruals and a trial balance. This is the data everything later sits on.',
+ build:['A chart of accounts per client','Journal entries and recurring journals','Creditors, accruals and a debtors age analysis','Period locking and a trial balance','Export back to Sage or another package'],
+ inn:'Approved coded batches',out:'General ledger and trial balance',
+ check:'Journals are posted by a person; periods are locked by a person.',
+ ask:'Do we replace the accounting package, or keep it as the official record and mirror it?'},
+
+/* ---------- 3 REPORT ---------- */
+{id:'management-accounts',s:'report',p:'next',t:'Profit and loss, balance sheet, cash flow',
+ what:'The standard statements, produced every month for every client from the ledger, in the firm’s own layout.',
+ build:['Statements built from the ledger, first from a Sage export','Comparison with last month and last year','The firm’s template and branding','A PDF pack'],
+ inn:'Trial balance',out:'Monthly statements',
+ check:'An accountant reviews and releases each set.',
+ heard:'The firm believes most clients never read their management statements.'},
+{id:'sense-checks',s:'report',p:'next',t:'Does this make sense?',
+ what:'Before a person reviews the statements, the AI points at the lines that look wrong, so review time goes to thinking.',
+ build:['Unusual movements against previous months','Balances that should not be negative','Amounts left in suspense or unallocated','Notes for the reviewer in plain language'],
+ inn:'Draft statements',out:'A list of lines to look at',
+ check:'The reviewer decides what is a real problem.'},
+{id:'monthly-pack',s:'report',p:'later',t:'A pack for every client, every month',
+ what:'Once approved, each client’s pack is sent automatically, so clients who used to get numbers once a year get them monthly.',
+ build:['A delivery schedule per client','Sending only after approval','A record of what was sent and when'],
+ inn:'Approved statements',out:'A pack in the client’s inbox',
+ check:'Nothing is sent without a named person’s approval.',
+ heard:'Regular reporting was discussed as a way to keep clients, not only to inform them.'},
+{id:'annual-statements',s:'report',p:'later',t:'Annual financial statements',
+ what:'A first draft of the year-end financial statements and notes, prepared from the trial balance.',
+ build:['Financial statement templates by entity type','Draft notes','A list of what the system could not complete'],
+ inn:'Year-end trial balance',out:'Draft annual financial statements',
+ check:'The accountant finalises and signs. The system only drafts.'},
+
+/* ---------- 4 COMPLY ---------- */
+{id:'vat-returns',s:'comply',p:'next',t:'VAT returns',
+ what:'The VAT return is prepared from the coded transactions, with a schedule that shows where every figure came from.',
+ build:['VAT calculated from the books','A draft VAT201','A supporting schedule, cross-checked to the ledger','A submission pack for the reviewer'],
+ inn:'Coded transactions for the VAT period',out:'A draft return and its schedule',
+ check:'A person reviews and submits.',
+ heard:'Automating VAT and PAYE returns was the point the firm reacted to most strongly. Today someone sits and captures them.'},
+{id:'paye-returns',s:'comply',p:'next',t:'PAYE returns',
+ what:'The monthly employer return, and the twice-yearly reconciliation, prepared from payroll figures.',
+ build:['Figures pulled from payroll','A draft monthly EMP201','The EMP501 reconciliation','Differences between payroll and the ledger flagged'],
+ inn:'Payroll data',out:'Draft returns',
+ check:'A person reviews and submits.',
+ ask:'Which payroll packages do the firm’s clients use?'},
+{id:'provisional-tax',s:'comply',p:'later',t:'Provisional tax',
+ what:'Estimates for every provisional taxpayer are drafted in bulk from the year-to-date numbers.',
+ build:['An estimate from actual figures to date','Drafts for all clients in one run','A place for the accountant to adjust each estimate','A submission list'],
+ inn:'Year-to-date results',out:'Draft provisional tax estimates',
+ check:'The accountant sets the final estimate for each client.',
+ heard:'Provisional tax season takes the team about two weeks. The firm is starting to use a practice suite that pulls figures from SARS and submits in bulk, so we need to decide whether to compete with it or feed it.'},
+{id:'income-tax',s:'comply',p:'later',t:'Income tax returns',
+ what:'Company, trust and individual returns, filled in from the financial statements and from what the system already knows about the client.',
+ build:['A standing tax profile per client, so the same questions are not answered every year','A pre-filled draft return','A schedule of tax adjustments','A list of what it does not know, for a person to supply'],
+ inn:'Annual financial statements and the client’s tax profile',out:'A draft return',
+ check:'The tax practitioner reviews every return before it goes in.',
+ heard:'The firm’s new practice suite does not yet handle income tax returns.'},
+{id:'cipc-secretarial',s:'comply',p:'later',t:'CIPC and company secretarial',
+ what:'Annual returns, beneficial ownership, share transfers and the paperwork that goes with them, drafted from one company register.',
+ build:['A register of each company’s directors and shareholders','A monthly list of annual returns falling due','Draft minutes, resolutions and share certificates','Changes in directors, shareholders or address picked up from the client check-in','A beneficial ownership register that also feeds tax returns'],
+ inn:'Company records and changes',out:'Documents ready to lodge',
+ check:'A person lodges with CIPC. The system prepares.',
+ heard:'CIPC does not accept submissions from outside software, but having the documents drafted is about half the work.'},
+{id:'sars-letters',s:'comply',p:'next',t:'SARS letters and deadlines',
+ what:'Letters and notices from SARS are recognised as they arrive, filed to the client and turned into dated tasks.',
+ build:['Recognition of SARS letters in the mailbox','A deadline pulled from each letter','A compliance calendar per client','Warnings before a deadline is missed'],
+ inn:'Incoming SARS correspondence',out:'Dated tasks on a calendar',
+ check:'A person confirms each deadline and who owns it.'},
+{id:'filing-assistant',s:'comply',p:'later',t:'Filing assistant',
+ what:'The clicking is done for you: the system signs in to the filing site, enters the approved figures and stops for a person to approve before anything is submitted.',
+ build:['A fixed, tested route through each form','A screenshot of every step as proof','A check that what is on screen matches the books','A stop for approval before submission'],
+ inn:'An approved return',out:'A submitted return and its proof',
+ check:'Nothing is submitted without a person’s approval.',
+ ask:'Do the SARS eFiling terms allow this, or must it go through an approved software route? This step also needs an internet connection.'},
+
+/* ---------- 5 ADVISE ---------- */
+{id:'chat-with-numbers',s:'advise',p:'next',t:'A conversation with the numbers',
+ what:'Ask the books a question in plain language and get an answer with its workings. For the accountant first, and later for the client.',
+ build:['Questions answered from the ledger','Comparisons across any periods','Every answer shows the accounts it used','Later: a simple app for the client'],
+ inn:'The ledger',out:'Answers with their source',
+ check:'Client-facing answers are limited to their own approved numbers.',
+ heard:'The example given was “compare my turnover for the last two months with the same months over the last two years”.'},
+{id:'insight-report',s:'advise',p:'next',t:'Plain-language summary',
+ what:'A short bulleted note that says what changed this month and why, written for a business owner who is not a finance person.',
+ build:['A summary of what moved and what caused it','Three to five points, no jargon','The firm’s tone of voice','Edited and approved by the accountant'],
+ inn:'Approved statements',out:'A one-page note for the client',
+ check:'The accountant edits and approves the note.'},
+{id:'proactive-alerts',s:'advise',p:'later',t:'Proactive alerts',
+ what:'Each month a fixed set of rules runs over every client and tells the accountant who is about to cross a line that matters.',
+ build:['Rules for tax thresholds and brackets','Rules for VAT registration and small-business status','A monthly alert list for the accountant','Suggested talking points for the call'],
+ inn:'Every client’s numbers',out:'A short list of clients to phone',
+ check:'The accountant decides whether to raise it with the client.',
+ heard:'With many clients, nobody can keep every threshold in their head. The system can, and it checks the same way every month.'},
+{id:'planning-prompts',s:'advise',p:'later',t:'Tax and estate planning prompts',
+ what:'A review of a client’s structure, will or plans against a checklist, to surface gaps worth a conversation.',
+ build:['A review checklist per topic','Gaps listed with the reason','Similar past situations pulled from the firm’s own files'],
+ inn:'Client documents and numbers',out:'A list of points to discuss',
+ check:'This is advice. A qualified person owns every recommendation.'},
+{id:'client-portal',s:'advise',p:'later',t:'Client portal',
+ what:'One place where the client uploads documents, sees their reports and asks questions.',
+ build:['Document upload','The periodic check-in survey','Reports and summaries','The conversation with the numbers','Messages to the firm'],
+ inn:'Approved reports and the ledger',out:'A self-service view for the client',
+ check:'Clients see only what the firm has approved.',
+ ask:'A portal needs to be reachable from outside the office. How does that fit with keeping everything local?'},
+
+/* ---------- FOUNDATION ---------- */
+{id:'local-machine',s:'base',p:'now',v1:1,t:'The local AI machine',
+ small:'One ordinary computer in the office. Build 1 converts downloaded statements with plain code, so it needs no AI model and no server yet.',
+ what:'The computer the AI runs on, inside the firm. It can start as one strong laptop and grow into a shared office server.',
+ build:['A tested setup on one ordinary office computer','Updates and backups','Only the mailbox connection reaches outside','X|A machine able to run an AI model, once scanned statements or later builds need one','X|A shared server for a whole office'],
+ inn:'',out:'',check:'',
+ heard:'The firm’s accounting software runs only on Windows, so the machine must work alongside Windows PCs.'},
+{id:'firm-view',s:'base',p:'now',v1:1,t:'Firm view',
+ small:'One screen: a list of the statements that came in, each marked passed, needs attention or unknown sender, with a link to the file. That list is also the log.',open:['firm','Open the firm view sketch'],
+ what:'The screen the firm works from: one place to see where every client stands, read what was sent and received, open documents, approve what is waiting and look back through the audit log. The system does the routine work; this is where people steer it.',
+ build:['One screen listing every statement that came in: client, account, month, and whether it passed, needs attention or came from an unknown sender','A link from each line to the original PDF and the file ready for Sage','The same list kept as a dated log of what the system did','The master list on the same screen, where a person can add an account or mark one closed','B2|Today: what is waiting for a person, what clients still owe and what is coming up','B2|Clients: the live status of every account, with actions such as request documents, send a reminder and start a check-in','B2|Messages: every email in and out per client, with drafts to approve','B2|Approvals: list changes, drafted queries and emails the system could not match','B2|A fuller audit log, with a filter by person and client','B3|Bookkeeping, reports, advice and tax each add their own screens'],
+ inn:'',out:'',check:'',
+ heard:'The proof of concept discussed with the firm included a small dashboard showing statements in and CSV files out.',
+ ask:'Who at the firm sees which clients: everyone, or only the bookkeeper who owns them? And should managers get their own summary?'},
+{id:'human-approval',s:'base',p:'now',t:'Human involvement',
+ small:'In the core the person is the control: nothing enters Sage unless the bookkeeper imports it.',
+ what:'At every stage the system prepares and a person decides. Nothing reaches the books, a client or SARS without a named person approving it.',
+ build:['A person imports each file into Sage, and deals with any line that fails the balance check','B2|One list of what is waiting for someone to approve','B2|Periodic reviews as well as one-by-one approvals, starting with a quarterly reconciliation of the master list','B3|Confidence thresholds the firm can set'],
+ inn:'',out:'',check:'',
+ heard:'This was the firm’s firmest condition. They do not want staff following whatever the system produces without thinking.'},
+{id:'audit-trail',s:'base',p:'now',t:'Audit trail',
+ small:'In the core, a plain dated list of what the system did, shown on the one screen.',
+ what:'A permanent record of what the system did, what it was unsure of, who approved it and when.',
+ build:['A dated log of every automated step','Shown in the firm view next to the statements it relates to','B2|Who approved each item, and when','B2|A filter by client, person and date, and a report per client or period','B3|The reason behind each coding decision'],
+ inn:'',out:'',check:''},
+{id:'attention-checks',s:'base',p:'next',t:'Planted test items',
+ what:'Now and then the system slips a deliberately wrong item into someone’s review. If they approve it, the item is held back and management is told. It works like a test phishing email.',
+ build:['Planted errors at random','Held back automatically if approved','A report to management on who caught them','Adjustable frequency'],
+ inn:'',out:'',check:'',
+ heard:'This came from the firm as the way to keep reviewers thinking once the routine work is automated.'},
+{id:'privacy-bridge',s:'base',p:'later',t:'Strip details, then ask a bigger model',
+ what:'For the few tasks a local model cannot handle, names and identifying details are removed locally before the question goes to a larger cloud model.',
+ build:['Local removal of names, numbers and identifiers','A record of what was sent out','Details put back when the answer returns','Off by default'],
+ inn:'',out:'',check:'',
+ ask:'Does stripping details go far enough for POPIA? This needs a data-protection lawyer’s view.'},
+{id:'integrations',s:'base',p:'next',t:'Connections to other systems',
+ what:'The links to everything outside our system: accounting packages, payroll, SARS eFiling and CIPC.',
+ build:['Sage Desktop first','B6|Payroll packages','B6|SARS eFiling and CIPC, where allowed','X|Xero and QuickBooks'],
+ inn:'',out:'',check:''},
+{id:'value-tracker',s:'base',p:'next',t:'Hours saved',
+ small:'Not software yet. For build 1, time the job by hand for one month before and one month after.',
+ what:'A running count of the time each task took before and takes now, per client. This is the proof the product works, and the basis for pricing it.',
+ build:['A baseline time for each task','Time actually spent after automation','Hours saved per client and per month','The saving in rand at the firm’s hourly rate'],
+ inn:'',out:'',check:'',
+ heard:'The firm judges any software by hours saved against cost, and by whether the time freed lets it take on more clients.'}
+];
+
+const PH={now:'Now',next:'Next',later:'Later'};
+const byId=Object.fromEntries(N.map(n=>[n.id,n]));
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.textContent=h;return e};
+const BUILDS=[{n:0,t:'Not scheduled',d:''},
+ {n:1,t:'Capture and CSV upload',d:'Statements arrive by email, are filed, converted to a checked file and made ready for Sage. Useful on its own.'},
+ {n:2,t:'Requests and upkeep',d:'Everything around the core that keeps a client’s documents complete and the master list current: requests, reminders, check-ins, replies and search. Builds on 1.'},
+ {n:3,t:'Bookkeeping',d:'Replaces the bookkeeping function: from the checked file, through bank rules and journals, to a general ledger. Builds on 1.'},
+ {n:4,t:'Reporting',d:'Standard reports: profit and loss, balance sheet, cash flow and key management accounts. Needs ledger data, from build 3 or read out of Sage.'},
+ {n:5,t:'AI advisory',d:'The AI layer on top of the numbers: ask questions, get plain-language summaries and alerts. Builds on 4.'},
+ {n:6,t:'Compliance',d:'SARS and CIPC: VAT, PAYE, provisional and income tax, company secretarial work and filing. Needs the numbers from 3 or 4.'}];
+const BMAP={'account-register':1,'request-schedule':2,'client-requests':2,'account-confirmation':2,'mailbox-reader':1,'slips-and-invoices':2,'sort-and-file':1,'client-folders':1,'receipt-check':2,'client-replies':2,'list-changes':2,'document-search':2,
+ 'statement-to-csv':1,'statement-checks':1,'csv-folder':1,'push-to-sage':1,'other-platforms':0,'rules-engine':3,'exceptions-queue':3,'external-journals':3,'own-ledger':3,
+ 'management-accounts':4,'sense-checks':4,'monthly-pack':4,'annual-statements':4,
+ 'vat-returns':6,'paye-returns':6,'provisional-tax':6,'income-tax':6,'cipc-secretarial':6,'sars-letters':6,'filing-assistant':6,
+ 'chat-with-numbers':5,'insight-report':5,'proactive-alerts':5,'planning-prompts':5,'client-portal':5,
+ 'local-machine':1,'firm-view':1,'human-approval':1,'audit-trail':1,'integrations':1,'value-tracker':0,'attention-checks':3,'privacy-bridge':5};
+N.forEach(n=>{n.b=BMAP[n.id];if(n.b===undefined)throw new Error('no build for '+n.id)});
+const ACT=new Set();
+const hasB=b=>!ACT.size||ACT.has(b);
+const bchip=(b,cls)=>{const e=el('span','bch b'+b+(cls?' '+cls:''),b?String(b):'–');e.title=(b?'Build '+b+': ':'')+BUILDS[b].t;return e};
+
+const stageOf=Object.fromEntries(STAGES.map(s=>[s.id,s]));
+const ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h17"/><path d="M14 6l6 6-6 6"/></svg>';
+
+/* templates */
+const TPL=[
+{id:'tpl-master-list',step:'account-register',t:'Master list: set-up view',
+ d:'What build 1 needs for each client: the addresses they send from, every account, the Sage bank account each one maps to, and the statement password where there is one.',
+ h:`<table class="tb"><tr><th>Client</th><th>Sends from</th><th>Bank</th><th>Account</th><th>Ends in</th><th>Sage bank account</th><th>Password</th><th>Status</th></tr>
+<tr><td>Mokoena Logistics (Pty) Ltd</td><td>thandi@mokoena.example</td><td>FNB</td><td>Business cheque</td><td>4417</td><td>FNB Cheque</td><td>None</td><td><span class="st ok">Open</span></td></tr>
+<tr><td></td><td></td><td>FNB</td><td>Credit card</td><td>9021</td><td>FNB Credit Card</td><td>Saved</td><td><span class="st ok">Open</span></td></tr>
+<tr class="cl"><td></td><td></td><td>Nedbank</td><td>Savings</td><td>3350</td><td>Nedbank Savings</td><td>None</td><td>Closed 31 Aug 2026</td></tr>
+<tr><td>Karoo Dental Studio Inc</td><td>lindiwe@karoodental.example</td><td>Standard Bank</td><td>Business current</td><td>7782</td><td>Standard Bank Current</td><td>Saved</td><td><span class="st ok">Open</span></td></tr>
+<tr><td></td><td></td><td>Standard Bank</td><td>Credit card</td><td>1164</td><td>Standard Bank Card</td><td>Saved</td><td><span class="st ok">Open</span></td></tr>
+<tr><td>Van Wyk Plumbing CC</td><td>pieter@vanwykplumbing.example</td><td>Capitec</td><td>Business account</td><td>5508</td><td>Capitec Business</td><td>None</td><td><span class="st ok">Open</span></td></tr></table>
+<p class="sum">The password itself is never shown, only whether one is saved. Build 2 adds to each account the evidence required and how often it is due, and to each client the standing questions for the check-in.</p>`},
+{id:'tpl-live-list',step:'receipt-check',t:'Master list: live view for a month',
+ d:'The same list during a working month: what was asked for, what has arrived, what is being queried and what is waiting for a person.',
+ h:`<table class="tb"><tr><th>Client</th><th>Account</th><th>Due</th><th>Status</th><th>Received</th><th>Note</th></tr>
+<tr><td>Mokoena Logistics</td><td class="nw">FNB cheque 4417</td><td class="nw">Oct 2026 statement</td><td><span class="st ok">Received</span></td><td class="nw">3 Nov</td><td>Checked and passed on</td></tr>
+<tr><td></td><td class="nw">FNB card 9021</td><td class="nw">Oct 2026 statement</td><td><span class="st out">Outstanding</span></td><td>–</td><td>Reminder sent 9 Nov</td></tr>
+<tr><td>Karoo Dental Studio</td><td class="nw">Std Bank current 7782</td><td class="nw">Oct 2026 statement</td><td><span class="st q">Query</span></td><td class="nw">2 Nov</td><td>Pages 3 and 4 missing; query sent to client</td></tr>
+<tr><td></td><td class="nw">Std Bank card 1164</td><td class="nw">Oct 2026 statement</td><td><span class="st ok">Received</span></td><td class="nw">2 Nov</td><td>Checked and passed on</td></tr>
+<tr><td>Van Wyk Plumbing</td><td class="nw">Capitec 5508</td><td class="nw">Sep and Oct statements</td><td><span class="st ok">Received early</span></td><td class="nw">28 Oct</td><td>Left out of the month-end request</td></tr>
+<tr><td></td><td class="nw">Account ending 2290</td><td>–</td><td><span class="st ap">To approve</span></td><td>–</td><td>Not on the list: client mentioned a new savings account, and transfers to it appear on the statement</td></tr></table>
+<p class="sum">October 2026: 3 clients, 6 items. 3 received, 1 outstanding, 1 query, 1 change to approve. List last confirmed by client: Mokoena 14 Sep, Karoo Dental 1 Oct, Van Wyk 12 Jul (check-in due).</p>`},
+{id:'tpl-request-email',step:'client-requests',t:'Request for statements',
+ d:'The month-end request. It names each account and the exact period, and leaves out anything the client has already sent.',
+ h:`<div class="mail"><dl><dt>From</dt><dd>[Bookkeeper name], [Firm name]</dd><dt>To</dt><dd>thandi@mokoena.example</dd><dt>Subject</dt><dd class="sj">October statements for Mokoena Logistics: 2 items needed</dd></dl>
+<div class="mb"><p>Hi Thandi,</p><p>It’s time for October’s bookkeeping. Please send us these two statements:</p>
+<ol><li>FNB business cheque account ending 4417: 1 to 31 October 2026</li><li>FNB credit card ending 9021: 1 to 31 October 2026</li></ol>
+<p>You can reply to this email with the PDFs attached. Statements downloaded from online banking work best.</p>
+<p>If we could have them by Friday 6 November, your October figures will be ready on time.</p>
+<p>Thank you,<br>[Bookkeeper name]<br>[Firm name]</p></div></div>`},
+{id:'tpl-reminder-email',step:'client-requests',t:'Reminder for what is still missing',
+ d:'A follow-up that thanks the client for what arrived and lists only what is still outstanding.',
+ h:`<div class="mail"><dl><dt>From</dt><dd>[Bookkeeper name], [Firm name]</dd><dt>To</dt><dd>thandi@mokoena.example</dd><dt>Subject</dt><dd class="sj">Still needed: October credit card statement (ending 9021)</dd></dl>
+<div class="mb"><p>Hi Thandi,</p><p>Thank you for the cheque account statement, which we received on 3 November.</p><p>One item is still outstanding for October:</p>
+<ul><li>FNB credit card ending 9021: 1 to 31 October 2026</li></ul>
+<p>Could you send it by Friday 13 November? Just reply to this email with the PDF.</p><p>Thank you,<br>[Bookkeeper name]<br>[Firm name]</p></div></div>`},
+{id:'tpl-checkin-email',step:'account-confirmation',t:'Periodic check-in email',
+ d:'Shows the client what is on file and asks the standing questions. The client can answer by email or through the survey.',
+ h:`<div class="mail"><dl><dt>From</dt><dd>[Bookkeeper name], [Firm name]</dd><dt>To</dt><dd>pieter@vanwykplumbing.example</dd><dt>Subject</dt><dd class="sj">Quick check-in: are your details still right?</dd></dl>
+<div class="mb"><p>Hi Pieter,</p><p>Every so often we check that our records for Van Wyk Plumbing are up to date. It takes about two minutes.</p>
+<p>The accounts we have for you:</p><ul><li>Capitec business account ending 5508</li></ul>
+<p>Three quick questions:</p><ol><li>Have you opened or closed any bank account or credit card?</li><li>Have you bought or sold any vehicles, equipment or property?</li><li>Have you taken out or settled any loan or finance?</li></ol>
+<p>You can answer in whichever way is easier:</p><ul><li>Reply to this email in your own words. If nothing has changed, “No changes” is all we need.</li><li>Or use the short survey:</li></ul>
+<p><span class="fakebtn">Answer in the 2-minute survey</span></p>
+<p>Thank you,<br>[Bookkeeper name]<br>[Firm name]</p></div></div>`},
+{id:'tpl-survey',step:'account-confirmation',t:'Check-in survey',
+ d:'Built for each client by the AI: pre-filled with their accounts, and only the questions that apply to them. It shows no more than the last four digits of an account.',
+ h:`<div class="survey"><h3>Van Wyk Plumbing: quick check-in</h3><p class="sm">5 questions, about 2 minutes. Example only: this form does not send anything.</p>
+<fieldset><legend>1. Capitec business account ending 5508</legend><label><input type="radio" name="s1" checked> Still open</label><label><input type="radio" name="s1"> Closed</label></fieldset>
+<fieldset><legend>2. Any bank account or credit card we are missing?</legend><label><input type="radio" name="s2"> No</label><label><input type="radio" name="s2" checked> Yes</label><input type="text" value="Capitec savings, ending 2290, opened in October" aria-label="Which account"><p class="hint">Bank, type of account and the last four digits.</p></fieldset>
+<fieldset><legend>3. Bought or sold any vehicles, equipment or property since July?</legend><label><input type="radio" name="s3" checked> No</label><label><input type="radio" name="s3"> Yes</label><p class="hint">If yes, we will ask for the invoice.</p></fieldset>
+<fieldset><legend>4. Taken out or settled any loan or finance?</legend><label><input type="radio" name="s4" checked> No</label><label><input type="radio" name="s4"> Yes</label></fieldset>
+<fieldset><legend>5. Has anyone joined or left your staff?</legend><label><input type="radio" name="s5" checked> No</label><label><input type="radio" name="s5"> Yes</label></fieldset>
+<p style="margin:14px 0 0"><span class="fakebtn">Send answers</span></p></div>`},
+{id:'tpl-receipt',step:'client-replies',t:'Acknowledgement of receipt',
+ d:'Sent whenever a client submits something. It confirms what arrived and says what, if anything, is still outstanding.',
+ h:`<div class="mail"><dl><dt>From</dt><dd>[Bookkeeper name], [Firm name]</dd><dt>To</dt><dd>thandi@mokoena.example</dd><dt>Subject</dt><dd class="sj">Received, thank you: October statement (cheque account 4417)</dd></dl>
+<div class="mb"><p>Hi Thandi,</p><p>Thank you. We have received:</p><ul><li>FNB business cheque account ending 4417: 1 to 31 October 2026 (6 pages)</li></ul>
+<p>Still outstanding for October:</p><ul><li>FNB credit card ending 9021</li></ul><p>There is nothing more you need to do for the cheque account.</p><p>Kind regards,<br>[Bookkeeper name]<br>[Firm name]</p></div></div>`},
+{id:'tpl-query',step:'client-replies',t:'Query when something is wrong',
+ d:'Drafted when a document fails a check: the wrong period, missing pages, an unreadable scan or a missing password. A person approves it before it is sent.',
+ h:`<div class="mail"><dl><dt>From</dt><dd>[Bookkeeper name], [Firm name]</dd><dt>To</dt><dd>lindiwe@karoodental.example</dd><dt>Subject</dt><dd class="sj">One thing to fix: October statement for account ending 7782</dd></dl>
+<div class="mb"><p>Hi Lindiwe,</p><p>Thank you for sending October’s statements. The credit card statement (ending 1164) arrived complete.</p>
+<p>The statement for your Standard Bank current account ending 7782 has pages 3 and 4 of 6 missing, so the balances do not carry through.</p>
+<p>Could you send the full statement for 1 to 31 October again? A fresh download from online banking usually solves it.</p><p>Thank you,<br>[Bookkeeper name]<br>[Firm name]</p></div></div>`},
+{id:'tpl-list-change',step:'list-changes',t:'Proposed change to the master list',
+ d:'What a person sees in the approval queue: the change, where it came from and what happens if it is approved.',
+ h:`<div class="card"><dl><dt>Client</dt><dd>Van Wyk Plumbing CC</dd><dt>Change</dt><dd>Add account: Capitec savings, ending 2290</dd>
+<dt>Where from</dt><dd>Check-in survey, 10 Nov: “Capitec savings, ending 2290, opened in October”. Also seen: three transfers to an account ending 2290 on the October statement.</dd>
+<dt>If approved</dt><dd>Added to the master list as open from 1 October 2026. October statement requested from the client. Included in every request from November.</dd></dl>
+<div class="acts"><span class="fakebtn">Approve</span><span class="fakebtn alt">Edit</span><span class="fakebtn alt">Reject</span></div></div>`}
+];
+const tplById=Object.fromEntries(TPL.map(x=>[x.id,x]));
+const tplOf=id=>TPL.filter(x=>x.step===id);
+function tpBtn(id){const tp=tplOf(id);if(!tp.length)return null;const b=el('button','tp','📄');b.type='button';b.dataset.tpl=tp[0].id;b.title='See example';b.setAttribute('aria-label','Example: '+tp[0].t);b.addEventListener('click',e=>{e.stopPropagation();location.hash=tp[0].id});return b}
+(function buildTemplates(){
+  const idx=document.getElementById('tidx'),list=document.getElementById('tlist');
+  TPL.forEach(x=>{
+    const ib=el('button',null,x.t);ib.type='button';ib.dataset.b=byId[x.step].b;ib.addEventListener('click',()=>{location.hash=x.id});idx.append(ib);
+    const s=el('section','tpl');s.id='sec-'+x.id;s.dataset.b=byId[x.step].b;const h=el('header');h.append(el('h2',null,x.t));
+    const m=el('p','meta');m.append(bchip(byId[x.step].b),document.createTextNode(' Build '+byId[x.step].b+': '+BUILDS[byId[x.step].b].t+'. Used in: '));const lb=el('button','lnk',byId[x.step].t);lb.type='button';lb.addEventListener('click',()=>{location.hash=x.step});m.append(lb);
+    h.append(m,el('p','des',x.d));s.append(h);const ex=el('div','ex');ex.innerHTML=x.h;s.append(ex);list.append(s);
+  });
+})();
+
+function rowFor(n){
+  const b=el('button','row'+(n.v1?' isv1':''));b.type='button';b.dataset.id=n.id;b.dataset.p=n.p;
+  b.append(el('span','nm',n.t));
+  const pc=el('span','pc');pc.append(bchip(n.b));b.append(pc);
+  b.addEventListener('click',()=>{location.hash=n.id});
+  const tp=tpBtn(n.id);if(tp){const w=el('div','rw');w.append(b,tp);return w}
+  return b;
+}
+function stageEl(s){
+  const sec=el('section','stage');sec.setAttribute('aria-labelledby','h-'+s.id);
+  const h=el('header');
+  const num=el('h2','num');num.id='h-'+s.id;const i=el('i',null,String(s.n));num.append(i,document.createTextNode(s.name));
+  h.append(num,el('p','sect',s.sect+(s.from?' · '+s.from:'')),el('p','why',s.why));sec.append(h);
+  let g=null;
+  N.filter(n=>n.s===s.id&&!n.flowOnly&&!n.sub).forEach(n=>{
+    if(n.g&&n.g!==g){g=n.g;sec.append(el('div','grp',g))}
+    sec.append(rowFor(n));
+  });
+  return sec;
+}
+function conn(){const d=el('div','conn');d.innerHTML=ARROW;return d}
+(function build(){
+  const flow=document.getElementById('flow');
+  flow.append(stageEl(stageOf.capture),conn(),stageEl(stageOf.process),conn(),stageEl(stageOf.report),conn());
+  const fork=el('div','fork');fork.append(stageEl(stageOf.comply),stageEl(stageOf.advise));flow.append(fork);
+  const base=document.getElementById('base');N.filter(n=>n.s==='base').forEach(n=>base.append(rowFor(n)));
+  const real=N.filter(n=>!n.flowOnly&&!n.sub);
+  const pk=real.filter(n=>!n.b).length;document.getElementById('count').textContent=(real.length-pk)+' pieces in 6 builds, '+pk+' parked';
+})();
+
+
+/* flow chart */
+const L=1,C=2,R=3;
+const FLOW={
+ caps:[{row:1,n:1,t:'Capture'},{row:10,n:2,t:'Process'},{row:17,n:3,t:'Report'}],
+ nodes:[
+  {id:'account-register',l:'Client and account list (Master List)',col:C,row:2,store:1},
+  {id:'request-schedule',l:'Request schedule',sub:'what and when',col:C,row:3},
+  {id:'client-requests',l:'Request documents',sub:'specific items',col:L,row:4},
+  {id:'account-confirmation',l:'Periodic client check-in',sub:'email or survey',col:R,row:4},
+  {id:'mailbox-reader',l:'Receive documents',sub:'at any time',col:C,row:6},
+  {id:'slips-and-invoices',l:'Slips and invoices',col:R,row:6},
+  {id:'sort-and-file',l:'Sort and file',col:C,row:7},
+  {id:'client-replies',l:'Reply to the client',sub:'receipt and queries',col:L,row:8},
+  {id:'receipt-check',l:'Check what arrived',sub:'against the request',col:C,row:8},
+  {id:'list-changes',l:'List changes',sub:'to approve',col:R,row:8},
+  {id:'client-folders',l:'Client folders',col:C,row:9,store:1},
+  {id:'document-search',l:'Document search',col:R,row:9},
+  {id:'statement-to-csv',l:'Convert to CSV',sub:'automatic',col:C,row:11},
+  {id:'statement-checks',l:'Prove every line',sub:'automatic balance check',col:C,row:12},
+  {id:'csv-folder',l:'CSV folder',col:C,row:13,store:1},
+  {id:'push-to-sage',l:'Upload to Sage Desktop',sub:'Route A: system one',col:L,row:14},
+  {id:'rules-engine',l:'Internal bookkeeping',sub:'Route B: bank rules',col:R,row:14},
+  {id:'other-platforms',l:'Xero, QuickBooks',col:L,row:15},
+  {id:'exceptions-queue',l:'Exceptions queue',col:R,row:15},
+  {id:'own-ledger',l:'General ledger',col:C,row:16,store:1},
+  {id:'external-journals',l:'External journals',col:R,row:16},
+  {id:'annual-statements',l:'Annual statements',col:L,row:18},
+  {id:'management-accounts',l:'Reports',sub:'P&L, balance sheet, cash flow',col:C,row:18},
+  {id:'sense-checks',l:'Sense checks',col:R,row:18}
+ ],
+ ext:[
+  {k:'x-fix',l:'A person, only if a line fails',col:String(L),row:12},  {k:'x-client',l:'The client',col:String(C),row:5},
+  {k:'x-sars',l:'SARS and CIPC',col:'1 / span 2',row:20},
+  {k:'x-client2',l:'The client',col:String(R),row:20}
+ ],
+ groups:[
+  {k:'g-comply',n:4,t:'Comply',col:'1 / span 2',row:19,c2:1,items:[['vat-returns','VAT'],['paye-returns','PAYE'],['provisional-tax','Provisional tax'],['income-tax','Income tax'],['cipc-secretarial','CIPC'],['sars-letters','SARS letters'],['filing-assistant','Filing assistant',1]]},
+  {k:'g-advise',n:5,t:'Advise',col:String(R),row:19,items:[['chat-with-numbers','Ask the numbers'],['insight-report','Summary'],['monthly-pack','Monthly pack'],['proactive-alerts','Alerts'],['planning-prompts','Planning prompts'],['client-portal','Client portal']]}
+ ],
+ edges:[
+  ['account-register','request-schedule'],
+  ['request-schedule','client-requests'],['request-schedule','account-confirmation'],
+  ['client-requests','x-client'],['account-confirmation','x-client'],
+  ['x-client','mailbox-reader'],['x-client','slips-and-invoices'],
+  ['mailbox-reader','sort-and-file'],['slips-and-invoices','sort-and-file'],
+  ['sort-and-file','receipt-check'],
+  ['receipt-check','client-replies','h'],['receipt-check','list-changes','h'],
+  ['receipt-check','client-folders'],['client-folders','document-search','h'],
+  ['client-replies','client-requests','upcol',{label:'chase what is missing'}],
+  ['list-changes','account-register','rlane',{label:'approved changes'}],
+  ['client-folders','statement-to-csv'],['statement-to-csv','statement-checks'],['statement-checks','csv-folder'],['statement-checks','x-fix','h',{dash:1}],
+  ['csv-folder','push-to-sage'],['csv-folder','rules-engine'],
+  ['push-to-sage','other-platforms','v',{dash:1}],
+  ['push-to-sage','own-ledger','v',{dash:1,label:'books read back'}],
+  ['rules-engine','exceptions-queue'],['exceptions-queue','own-ledger'],
+  ['external-journals','own-ledger','h'],
+  ['own-ledger','management-accounts'],
+  ['management-accounts','annual-statements','h'],['management-accounts','sense-checks','h'],
+  ['management-accounts','g-comply'],['annual-statements','g-comply'],['management-accounts','g-advise'],
+  ['g-comply','x-sars'],['g-advise','x-client2']
+ ]
+};
+const chart=document.getElementById('chart');
+function bubble(id,label,subt,store){
+  const n=byId[id];const b=el('button','bub b'+n.b+(store?' store':''));b.type='button';b.dataset.id=id;
+  b.append(bchip(n.b,'bn'),el('span',null,label));if(subt)b.append(el('small',null,subt));
+  b.setAttribute('aria-label',n.t+', '+(n.b?'build '+n.b+': ':'')+BUILDS[n.b].t);
+  b.addEventListener('click',()=>{location.hash=id});return b;
+}
+(function buildChart(){
+  const NS='http://www.w3.org/2000/svg';const svg=document.createElementNS(NS,'svg');svg.setAttribute('aria-hidden','true');chart.append(svg);
+  FLOW.caps.forEach(c=>{const d=el('div','cap');d.style.gridRow=c.row;d.append(el('i',null,String(c.n)),document.createTextNode(c.t));chart.append(d)});
+  FLOW.nodes.forEach(x=>{const b=bubble(x.id,x.l,x.sub,x.store);b.dataset.k=x.id;const tp=tpBtn(x.id);if(tp){const w=el('div','bw');w.style.gridColumn=x.col;w.style.gridRow=x.row;w.append(b,tp);chart.append(w)}else{b.style.gridColumn=x.col;b.style.gridRow=x.row;chart.append(b)}});
+  FLOW.ext.forEach(x=>{const d=el('div','ext',x.l);d.dataset.k=x.k;d.style.gridColumn=x.col;d.style.gridRow=x.row;chart.append(d)});
+  FLOW.groups.forEach(g=>{
+    const d=el('div','gbox');d.dataset.k=g.k;d.style.gridColumn=g.col;d.style.gridRow=g.row;
+    const h=el('h3');h.append(el('i',null,String(g.n)),document.createTextNode(g.t));d.append(h);
+    const inn=el('div','in'+(g.c2?' c2':''));g.items.forEach(it=>{const b=bubble(it[0],it[1]);if(it[2])b.classList.add('wide');inn.append(b)});d.append(inn);chart.append(d);
+  });
+})();
+function drawEdges(){
+  const svg=chart.querySelector('svg');if(!chart.offsetParent)return;
+  const NS='http://www.w3.org/2000/svg';const cr=chart.getBoundingClientRect();
+  const W=chart.scrollWidth,H=chart.scrollHeight;svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.textContent='';
+  const defs=document.createElementNS(NS,'defs');
+  defs.innerHTML='<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z" style="stroke:none"/></marker>';
+  svg.append(defs);
+  const gap=parseFloat(getComputedStyle(chart).rowGap)||34;const pad=parseFloat(getComputedStyle(chart).paddingRight)||16;
+  const box=k=>{const e=chart.querySelector('[data-k="'+k+'"]');const r=e.getBoundingClientRect();
+    return {l:r.left-cr.left,r:r.right-cr.left,t:r.top-cr.top,b:r.bottom-cr.top,cx:(r.left+r.right)/2-cr.left,cy:(r.top+r.bottom)/2-cr.top,g:e.classList.contains('gbox')}};
+  FLOW.edges.forEach(e=>{
+    const s=box(e[0]),t=box(e[1]),kind=e[2]||'v',o=e[3]||{};let d,lx,ly;
+    if(kind==='upcol'){
+      const x=s.cx-(s.r-s.l)/4;d='M'+x+' '+s.t+'V'+t.b;lx=x;ly=(s.t+t.b)/2;
+    }else if(kind==='rlane'){
+      const x=W-pad/2,sx=s.r-(s.r-s.l)*0.2,y1=s.t-gap/2;d='M'+sx+' '+s.t+'V'+y1+'H'+x+'V'+t.cy+'H'+t.r;lx=x;ly=(y1+t.cy)/2;
+    }else if(kind==='loop'){
+      const cg=parseFloat(getComputedStyle(chart).columnGap)||12;
+      const sx=s.r-(s.r-s.l)*0.14,gx=s.r+cg/2,y1=s.t-gap/2,y2=t.b+gap/2,tx=t.cx-(t.r-t.l)/4;
+      d='M'+sx+' '+s.t+'V'+y1+'H'+gx+'V'+y2+'H'+tx+'V'+t.b;
+    }else if(kind==='h'){
+      const y=(s.cy+t.cy)/2;const x1=s.cx<t.cx?s.r:s.l,x2=s.cx<t.cx?t.l:t.r;d='M'+x1+' '+y+'H'+x2;
+    }else{
+      const sx=s.cx,sy=s.b,ty=t.t;const tx=(t.g&&sx>t.l+16&&sx<t.r-16)?sx:t.cx;
+      if(Math.abs(sx-tx)<3){d='M'+sx+' '+sy+'V'+ty}
+      else{const my=sy+gap/2;d='M'+sx+' '+sy+'V'+my+'H'+tx+'V'+ty;lx=(sx+tx)/2;ly=my-6}
+    }
+    const p=document.createElementNS(NS,'path');p.setAttribute('d',d);p.setAttribute('marker-end','url(#ah)');if(o.dash)p.setAttribute('class','dash');if(o.both)p.setAttribute('marker-start','url(#ah)');svg.append(p);
+    if(o.label&&lx!=null){const vert=(kind==='upcol'||kind==='rlane');if(!vert||W>640){const tx=document.createElementNS(NS,'text');tx.setAttribute('text-anchor','middle');if(vert){tx.setAttribute('transform','translate('+(lx-7)+' '+ly+') rotate(-90)')}else{tx.setAttribute('x',lx);tx.setAttribute('y',ly)}tx.textContent=o.label;svg.append(tx)}}
+  });
+}
+let view='ledger';
+function setView(v){
+  view=v;
+  document.getElementById('flow').hidden=v!=='ledger';
+  document.getElementById('flowview').hidden=v!=='flow';
+  document.getElementById('tplview').hidden=v!=='templates';
+  document.getElementById('firmview').hidden=v!=='firm';
+  const aux=(v==='templates'||v==='firm');document.getElementById('basesec').hidden=aux;
+  document.querySelectorAll('#views button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v?'true':'false'));
+  try{localStorage.setItem('view',v)}catch(e){}
+  if(v==='flow')requestAnimationFrame(drawEdges);
+}
+document.querySelectorAll('#views button').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.v;setView(b.dataset.v)}));
+if(window.ResizeObserver){new ResizeObserver(()=>drawEdges()).observe(chart)}else{window.addEventListener('resize',drawEdges)}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(drawEdges)}
+try{const sv=localStorage.getItem('view');if(sv==='flow'||sv==='templates'||sv==='firm')setView(sv)}catch(e){}
+
+
+/* firm view */
+const FV0={tab:'core',form:null,who:'all',
+ clients:[
+  {id:'mok',name:'Mokoena Logistics (Pty) Ltd',sh:'Mokoena Logistics',person:'Thandi',email:'thandi@mokoena.example',freq:'Monthly',conf:'14 Sep',accts:[
+   {b:'FNB',ty:'Business cheque',l4:'4417',st:'ok',d:'3 Nov',n:'Checked and passed on'},
+   {b:'FNB',ty:'Credit card',l4:'9021',st:'out',d:'',n:'Reminder sent 9 Nov'},
+   {b:'Nedbank',ty:'Savings',l4:'3350',closed:'31 Aug 2026'}]},
+  {id:'kar',name:'Karoo Dental Studio Inc',sh:'Karoo Dental Studio',person:'Lindiwe',email:'lindiwe@karoodental.example',freq:'Monthly',conf:'1 Oct',accts:[
+   {b:'Standard Bank',ty:'Business current',l4:'7782',st:'q',d:'12 Nov',n:'September sent instead of October; drafted query waiting'},
+   {b:'Standard Bank',ty:'Credit card',l4:'1164',st:'ok',d:'2 Nov',n:'Checked and passed on'}]},
+  {id:'van',name:'Van Wyk Plumbing CC',sh:'Van Wyk Plumbing',person:'Pieter',email:'pieter@vanwykplumbing.example',freq:'Every two months',conf:'10 Nov',accts:[
+   {b:'Capitec',ty:'Business account',l4:'5508',st:'ok',d:'28 Oct',n:'Sent early, so left out of the request'}]}],
+ msgs:[
+  {d:'28 Oct 16:20',c:'van',dir:'in',s:'Sept and Oct statements attached',st:'Received'},
+  {d:'28 Oct 16:21',c:'van',dir:'out',s:'Received, thank you: statements for account 5508',st:'Sent automatically'},
+  {d:'2 Nov 08:00',c:'mok',dir:'out',s:'October statements: 2 items needed',st:'Sent automatically'},
+  {d:'2 Nov 08:00',c:'kar',dir:'out',s:'October statements: 2 items needed',st:'Sent automatically'},
+  {d:'2 Nov 14:12',c:'kar',dir:'in',s:'October statements',st:'Received'},
+  {d:'2 Nov 14:13',c:'kar',dir:'out',s:'Received, thank you: credit card 1164',st:'Sent automatically'},
+  {d:'2 Nov 15:02',c:'kar',dir:'out',s:'One thing to fix: pages missing, account 7782',st:'Sent after approval'},
+  {d:'3 Nov 09:40',c:'mok',dir:'in',s:'Cheque account statement',st:'Received'},
+  {d:'3 Nov 09:41',c:'mok',dir:'out',s:'Received, thank you: cheque account 4417',st:'Sent automatically'},
+  {d:'9 Nov 08:00',c:'mok',dir:'out',s:'Still needed: October credit card statement (9021)',st:'Sent automatically'},
+  {d:'9 Nov 08:00',c:'van',dir:'out',s:'Quick check-in: are your details still right?',st:'Sent automatically'},
+  {d:'10 Nov 11:34',c:'van',dir:'in',s:'Check-in survey completed',st:'Received'},
+  {d:'12 Nov 17:05',c:'kar',dir:'in',s:'Statement for 7782 again',st:'Received'},
+  {d:'12 Nov 17:06',c:'kar',dir:'out',s:'We received September: October still needed (7782)',st:'Draft: needs approval',id:'mq'},
+  {d:'13 Nov 07:48',c:null,dir:'in',s:'Statement, from nomsa@karoodental.example',st:'Not matched to a client',id:'mu'}],
+ docs:[
+  {d:'28 Oct',c:'van',n:'Capitec 5508: September statement',p:'4',r:'ok',rn:'Checked'},
+  {d:'28 Oct',c:'van',n:'Capitec 5508: October statement',p:'5',r:'ok',rn:'Checked'},
+  {d:'2 Nov',c:'kar',n:'Standard Bank 1164: October statement',p:'3',r:'ok',rn:'Checked'},
+  {d:'2 Nov',c:'kar',n:'Standard Bank 7782: October statement',p:'4 of 6',r:'q',rn:'Pages 3 and 4 missing'},
+  {d:'3 Nov',c:'mok',n:'FNB 4417: October statement',p:'6',r:'ok',rn:'Checked'},
+  {d:'12 Nov',c:'kar',n:'Standard Bank 7782: September statement',p:'6',r:'q',rn:'Wrong period: October was requested'},
+  {d:'13 Nov',c:null,n:'statement.pdf',p:'5',r:'ap',rn:'On hold: sender not on the master list',id:'du'}],
+ appr:[
+  {id:'a1',ty:'List change',c:'van',t:'Add account: Capitec savings, ending 2290',dt:'From Pieter’s check-in survey on 10 Nov. Transfers to an account ending 2290 also appear on the October statement.',ok:'Approve',no:'Reject'},
+  {id:'a2',ty:'Drafted query',c:'kar',t:'“We received September: October still needed (7782)”',dt:'Lindiwe re-sent a statement on 12 Nov, but it covers September. The draft thanks her and asks for 1 to 31 October.',ok:'Approve and send',no:'Discard'},
+  {id:'a3',ty:'Unmatched email',c:null,t:'nomsa@karoodental.example sent 1 PDF',dt:'The sender is not on the master list. The address matches Karoo Dental Studio, and the PDF reads as a Standard Bank statement for account 7782, October.',ok:'Add as a contact for Karoo Dental',no:'Not a client'}],
+ log:[
+  {d:'28 Oct 16:21',who:'System',c:'van',w:'Filed 2 statements sent early; left account 5508 out of the month-end request'},
+  {d:'2 Nov 08:00',who:'System',c:null,w:'Sent October requests to 2 clients (4 items)'},
+  {d:'2 Nov 14:13',who:'System',c:'kar',w:'Checked 2 statements: 1 passed, 1 with pages missing; drafted a query'},
+  {d:'2 Nov 15:02',who:'Bookkeeper',c:'kar',w:'Approved and sent the query about account 7782'},
+  {d:'3 Nov 09:41',who:'System',c:'mok',w:'Checked the statement for 4417 and sent an acknowledgement'},
+  {d:'9 Nov 08:00',who:'System',c:'mok',w:'Sent a reminder for account 9021'},
+  {d:'9 Nov 08:00',who:'System',c:'van',w:'Sent the periodic check-in'},
+  {d:'10 Nov 11:34',who:'System',c:'van',w:'Read the survey answers; proposed adding account 2290 to the master list'},
+  {d:'12 Nov 17:06',who:'System',c:'kar',w:'Statement for 7782 covers September, not October; drafted a query'},
+  {d:'13 Nov 07:48',who:'System',c:null,w:'Email from an unknown sender held for a person to assign'}]};
+let FV=JSON.parse(JSON.stringify(FV0));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fcl=id=>FV.clients.find(c=>c.id===id);
+const cname=id=>id?fcl(id).sh:'Not assigned';
+const STL={ok:['ok','Received'],out:['out','Outstanding'],q:['q','Query'],ap:['ap','On hold']};
+const chip=k=>'<span class="st '+STL[k][0]+'">'+STL[k][1]+'</span>';
+const NOW='13 Nov, now';
+function flog(w,c,who){FV.log.push({d:NOW,who:who||'You',c:c||null,w:w})}
+function fmsg(c,s,st){FV.msgs.push({d:NOW,c:c,dir:'out',s:s,st:st||'Sent by you'})}
+let toastT;function toast(m,plain){const e=document.getElementById('toast');e.textContent=m+(plain?'':' (Example only: nothing was really sent.)');e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),3800)}
+const behind=ids=>{const tb=FTABS.find(x=>x[0]===FV.tab)[2];return '<p class="behind">'+tb.map(b=>'<span class="bch b'+b+'">'+b+'</span>').join('')+' Arrives with build '+tb.join(' and ')+'. Steps behind this screen: '+ids.map(i=>'<button class="lnk" data-go="'+i+'">'+esc(byId[i].t)+'</button>').join('')+'</p>'};
+const FTABS=[['core','Statements',[1]],['today','Today',[2]],['clients','Clients',[2]],['msgs','Messages',[2]],['docs','Documents',[2]],['appr','Approvals',[2]],['log','Audit log',[2]]];
+function fvRender(){
+  const vis=FTABS.filter(x=>x[2].some(hasB));
+  if(!vis.length){document.getElementById('ftabs').innerHTML='';document.getElementById('fbody').innerHTML='<p class="bwarn">The firm view sketch covers builds 1 and 2 so far. Choose build 1 or 2, or Everything, to see it.</p>';return}
+  if(!vis.find(x=>x[0]===FV.tab))FV.tab=vis[0][0];
+  document.getElementById('ftabs').innerHTML=vis.map(x=>'<button role="tab" aria-selected="'+(FV.tab===x[0])+'" data-act="tab" data-a="'+x[0]+'">'+x[1]+'<em>build '+x[2].join('+')+'</em>'+(x[0]==='appr'&&FV.appr.length?'<i>'+FV.appr.length+'</i>':'')+'</button>').join('');
+  const out=[];FV.clients.forEach(c=>c.accts.forEach(a=>{if(!a.closed&&a.st!=='ok')out.push([c,a])}));
+  let h='';
+  if(FV.tab==='core'){
+    const PW=new Set(['9021','7782','1164']);
+    const res=d=>d.r==='ap'?['ap','Unknown sender']:/Pages 3 and 4/.test(d.rn)?['q','Needs attention: a balance does not carry']:['ok','Passed: every line proves'];
+    h+=behind(['account-register','mailbox-reader','sort-and-file','statement-to-csv','statement-checks','push-to-sage','firm-view']);
+    h+='<div class="fc fx"><h3>Statements received</h3><p class="sub">Everything that came in, newest first. This list is also the log.</p><table class="tb"><tr><th>Received</th><th>Client</th><th>Statement</th><th>Pages</th><th>Result</th><th>Files</th><th></th></tr>'+FV.docs.slice().reverse().map(d=>{const r=res(d);return '<tr><td class="nw">'+d.d+'</td><td>'+esc(cname(d.c))+'</td><td>'+esc(d.n)+'</td><td class="nw">'+d.p+'</td><td><span class="st '+r[0]+'">'+r[1]+'</span></td><td class="nw">'+(r[0]==='ok'?'PDF · Sage file':'PDF')+'</td><td class="nw">'+(r[0]==='q'?'<button class="fb alt sm" data-act="line">Show the failed line</button>':r[0]==='ap'&&FV.appr.find(x=>x.id==='a3')?'<button class="fb sm" data-act="ok" data-a="a3">Assign to Karoo Dental</button>':'')+'</td></tr>'}).join('')+'</table></div>';
+    h+='<div class="fc fx" style="margin-top:16px"><h3>Master list</h3><p class="sub">Who sends from where, and which Sage bank account each statement belongs to.</p><table class="tb"><tr><th>Client</th><th>Sends from</th><th>Account</th><th>Sage bank account</th><th>Password</th><th>Status</th><th></th></tr>'+FV.clients.map(c=>c.accts.map((a,i)=>'<tr'+(a.closed?' class="cl"':'')+'><td>'+(i?'':esc(c.name))+'</td><td>'+(i?'':esc(c.email)+(c.email2?', '+esc(c.email2):''))+'</td><td class="nw">'+esc(a.b)+' '+esc(a.ty.toLowerCase())+' '+a.l4+'</td><td class="nw">'+esc(a.b+' '+a.ty.replace(/^Business /,''))+'</td><td>'+(PW.has(a.l4)?'Saved':'None')+'</td><td class="nw">'+(a.closed?'Closed '+a.closed:'Open')+'</td><td class="nw">'+(i?'':'<button class="fb alt sm" data-act="form" data-a="acc1" data-b="'+c.id+'">Add account</button> ')+(a.closed?'':'<button class="fb alt sm" data-act="close" data-a="'+c.id+'" data-b="'+a.l4+'">Mark closed</button>')+'</td></tr>').join('')+(FV.form&&FV.form.k==='acc1'&&FV.form.c===c.id?'<tr><td colspan="7"><form class="ff" data-form="acc1" data-c="'+c.id+'"><label>Bank<input name="b" required value="Nedbank"></label><label>Type of account<input name="ty" required value="Credit card"></label><label>Last four digits<input name="l4" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" value="6140"></label><div class="acts"><button class="fb">Add to the master list</button><button type="button" class="fb alt" data-act="form" data-a="x">Cancel</button></div></form></td></tr>':'')).join('')+'</table></div>';
+  }
+  if(FV.tab==='today'){
+    h+=behind(['firm-view','human-approval','audit-trail']);
+    h+='<div class="fgrid two"><div class="fc"><h3>Waiting for you ('+FV.appr.length+')</h3>'+(FV.appr.length?'<ul class="flist">'+FV.appr.map(a=>'<li><span class="w">'+a.ty+'</span><span class="g">'+esc(a.t)+'</span></li>').join('')+'</ul><div class="acts"><button class="fb" data-act="tab" data-a="appr">Open approvals</button></div>':'<p class="sub">Nothing is waiting. The system will raise anything that needs a decision.</p>')+'</div>';
+    h+='<div class="fc"><h3>Still owed by clients ('+out.length+')</h3>'+(out.length?'<ul class="flist">'+out.map(([c,a])=>'<li><span class="w">'+chip(a.st)+'</span><span class="g">'+esc(c.sh)+': '+esc(a.b)+' '+a.l4+'</span></li>').join('')+'</ul>':'<p class="sub">Every open account is in for October.</p>')+'<div class="acts"><button class="fb alt" data-act="tab" data-a="clients">Open clients</button></div></div>';
+    h+='<div class="fc"><h3>Done by the system this month</h3><ul class="flist"><li><span class="g">Requests and reminders sent</span><b>'+FV.msgs.filter(m=>m.dir==='out'&&/needed|Request/.test(m.s)&&!/Draft/.test(m.st)).length+'</b></li><li><span class="g">Documents received and checked</span><b>'+FV.docs.length+'</b></li><li><span class="g">Acknowledgements sent</span><b>'+FV.msgs.filter(m=>/^Received, thank you/.test(m.s)).length+'</b></li><li><span class="g">Entries in the audit log</span><b>'+FV.log.length+'</b></li></ul></div>';
+    h+='<div class="fc"><h3>Coming up</h3><ul class="flist"><li><span class="w">Mon 16 Nov</span><span class="g">Second reminders for anything still outstanding</span></li><li><span class="w">Tue 1 Dec</span><span class="g">November requests go out to monthly clients</span></li><li><span class="w">Tue 15 Dec</span><span class="g">Quarterly review of the master list by a person</span></li><li><span class="w">Sat 9 Jan</span><span class="g">Next account confirmation for Van Wyk Plumbing</span></li></ul></div></div>';
+  }
+  if(FV.tab==='clients'){
+    h+=behind(['account-register','client-requests','account-confirmation','receipt-check']);
+    h+='<div class="fgrid">'+FV.clients.map(c=>{
+      let r='<div class="fc"><div class="top"><b>'+esc(c.name)+'</b><span>'+esc(c.person)+', '+esc(c.email)+(c.email2?', '+esc(c.email2):'')+'</span><span>'+c.freq+'. List confirmed '+c.conf+'</span></div><div class="fx"><table class="tb"><tr><th>Account</th><th>October</th><th>Received</th><th>Note</th><th></th></tr>';
+      c.accts.forEach(a=>{r+='<tr'+(a.closed?' class="cl"':'')+'><td class="nw">'+esc(a.b)+' '+esc(a.ty.toLowerCase())+' '+a.l4+'</td><td>'+(a.closed?'Closed':chip(a.st))+'</td><td class="nw">'+(a.closed?'':a.d||'–')+'</td><td>'+(a.closed?'Closed '+a.closed+'; no longer requested':esc(a.n))+'</td><td class="nw">'+(a.closed?'':(a.st!=='ok'&&hasB(2)?'<button class="fb sm" data-act="remind" data-a="'+c.id+'" data-b="'+a.l4+'">Send reminder now</button> ':'')+'<button class="fb alt sm" data-act="close" data-a="'+c.id+'" data-b="'+a.l4+'">Mark closed</button>')+'</td></tr>'});
+      r+='</table></div><div class="acts">'+(hasB(2)?'<button class="fb alt" data-act="form" data-a="req" data-b="'+c.id+'">Request additional documents</button>':'')+'<button class="fb alt" data-act="form" data-a="acc" data-b="'+c.id+'">Add bank account</button>'+(hasB(2)?'<button class="fb alt" data-act="checkin" data-a="'+c.id+'">Send check-in now</button>':'')+'<button class="fb alt" data-act="seemsgs" data-a="'+c.id+'">See messages</button></div>';
+      if(FV.form&&FV.form.c===c.id){
+        if(FV.form.k==='req')r+='<form class="ff" data-form="req" data-c="'+c.id+'"><label>What do you need from '+esc(c.person)+'?<input name="what" required value="Invoice and finance agreement for the new delivery vehicle"></label><div class="acts"><button class="fb">Send request</button><button type="button" class="fb alt" data-act="form" data-a="x">Cancel</button></div></form>';
+        else r+='<form class="ff" data-form="acc" data-c="'+c.id+'"><label>Bank<input name="b" required value="Nedbank"></label><label>Type of account<input name="ty" required value="Credit card"></label><label>Last four digits<input name="l4" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" value="6140"></label><div class="acts"><button class="fb">Add account and request October statement</button><button type="button" class="fb alt" data-act="form" data-a="x">Cancel</button></div></form>';
+      }
+      return r+'</div>'}).join('')+'</div>';
+  }
+  if(FV.tab==='msgs'){
+    h+=behind(['mailbox-reader','client-requests','client-replies']);
+    h+='<div class="ffil">Show <select class="fsel" data-sel="who"><option value="all">All clients</option>'+FV.clients.map(c=>'<option value="'+c.id+'"'+(FV.who===c.id?' selected':'')+'>'+esc(c.sh)+'</option>').join('')+'</select></div>';
+    const ms=FV.msgs.filter(m=>FV.who==='all'||m.c===FV.who).slice().reverse();
+    h+='<div class="fc"><ul class="flist">'+ms.map(m=>'<li><span class="w">'+m.d+'</span><span class="dir '+m.dir+'">'+(m.dir==='in'?'In':'Out')+'</span><span class="g"><b>'+esc(cname(m.c))+'</b>: '+esc(m.s)+'</span><span class="w">'+esc(m.st)+'</span>'+(m.id==='mq'&&/Draft/.test(m.st)?'<button class="fb sm" data-act="ok" data-a="a2">Approve and send</button>':'')+'</li>').join('')+'</ul></div>';
+  }
+  if(FV.tab==='docs'){
+    h+=behind(['sort-and-file','receipt-check','client-folders','document-search']);
+    h+='<div class="fc fx"><table class="tb"><tr><th>Received</th><th>Client</th><th>Document</th><th>Pages</th><th>Result</th><th>Filed in</th></tr>'+FV.docs.slice().reverse().map(d=>'<tr><td class="nw">'+d.d+'</td><td>'+esc(cname(d.c))+'</td><td>'+esc(d.n)+'</td><td class="nw">'+d.p+'</td><td><span class="st '+(d.r==='ok'?'ok':d.r)+'">'+esc(d.rn)+'</span></td><td class="nw">'+(d.c?esc(cname(d.c))+' / 2026 / '+(/September/.test(d.n)?'09':'10'):'Holding folder')+'</td></tr>').join('')+'</table></div>';
+  }
+  if(FV.tab==='appr'){
+    h+=behind(['list-changes','client-replies','mailbox-reader','human-approval']);
+    h+=FV.appr.length?'<div class="fgrid">'+FV.appr.map(a=>'<div class="fc"><div class="top"><span class="st ap">'+a.ty+'</span><span>'+esc(cname(a.c))+'</span></div><b>'+esc(a.t)+'</b><p style="margin:6px 0 0;font-size:15px">'+esc(a.dt)+'</p><div class="acts"><button class="fb" data-act="ok" data-a="'+a.id+'">'+a.ok+'</button><button class="fb alt" data-act="no" data-a="'+a.id+'">'+a.no+'</button></div></div>').join('')+'</div>':'<div class="fc"><h3>Nothing is waiting</h3><p class="sub" style="margin:0">Every decision so far is in the audit log.</p><div class="acts"><button class="fb alt" data-act="tab" data-a="log">Open the audit log</button></div></div>';
+  }
+  if(FV.tab==='log'){
+    h+=behind(['audit-trail','human-approval','attention-checks']);
+    h+='<div class="ffil">Show <select class="fsel" data-sel="lw"><option value="all">Everyone</option><option value="System"'+(FV.lw==='System'?' selected':'')+'>The system only</option><option value="people"'+(FV.lw==='people'?' selected':'')+'>People only</option></select></div>';
+    const ls=FV.log.filter(l=>!FV.lw||FV.lw==='all'||(FV.lw==='System'?l.who==='System':l.who!=='System')).slice().reverse();
+    h+='<div class="fc fx"><table class="tb"><tr><th>When</th><th>Who</th><th>Client</th><th>What happened</th></tr>'+ls.map(l=>'<tr><td class="nw">'+l.d+'</td><td class="nw">'+(l.who==='System'?'System':'<b>'+esc(l.who)+'</b>')+'</td><td class="nw">'+(l.c?esc(cname(l.c)):'–')+'</td><td>'+esc(l.w)+'</td></tr>').join('')+'</table></div>';
+  }
+  document.getElementById('fbody').innerHTML=h;
+}
+function fvOk(id){
+  const a=FV.appr.find(x=>x.id===id);if(!a)return;FV.appr=FV.appr.filter(x=>x.id!==id);
+  if(id==='a1'){fcl('van').accts.push({b:'Capitec',ty:'Savings',l4:'2290',st:'out',d:'',n:'Added today; October statement requested'});flog('Approved adding account 2290 to the master list','van');flog('Updated the master list and requested the October statement for 2290','van','System');fmsg('van','October statement needed for your new savings account (2290)','Sent automatically');toast('Account 2290 added and its October statement requested.')}
+  if(id==='a2'){const m=FV.msgs.find(x=>x.id==='mq');m.st='Sent after approval';m.d=NOW;fcl('kar').accts[0].n='Query sent today';flog('Approved and sent the query about September being sent instead of October','kar');toast('Query sent to Lindiwe.')}
+  if(id==='a3'){const k=fcl('kar');k.email2='nomsa@karoodental.example';const d=FV.docs.find(x=>x.id==='du');d.c='kar';d.n='Standard Bank 7782: October statement';d.r='ok';d.rn='Checked';const ac=k.accts[0];ac.st='ok';ac.d='13 Nov';ac.n='Checked and passed on';const m=FV.msgs.find(x=>x.id==='mu');m.c='kar';m.st='Received';flog('Added nomsa@karoodental.example as a contact for Karoo Dental Studio','kar');flog('Matched the held statement to account 7782, October: checked and passed on','kar','System');fmsg('kar','Received, thank you: October statement (account 7782)','Sent automatically');
+    if(FV.appr.find(x=>x.id==='a2')){FV.appr=FV.appr.filter(x=>x.id!=='a2');FV.msgs.find(x=>x.id==='mq').st='Withdrawn: no longer needed';flog('Withdrew the drafted query: the October statement has arrived','kar','System')}
+    toast('Contact added. The held statement was matched, checked and acknowledged.')}
+}
+function fvNo(id){const a=FV.appr.find(x=>x.id===id);if(!a)return;FV.appr=FV.appr.filter(x=>x.id!==id);if(id==='a2')FV.msgs.find(x=>x.id==='mq').st='Discarded';flog((a.no==='Reject'?'Rejected: ':a.no==='Discard'?'Discarded: ':'Marked as not a client: ')+a.t,a.c);toast('Recorded in the audit log.')}
+document.getElementById('firmview').addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){location.hash=g.dataset.go;return}
+  const b=e.target.closest('[data-act]');if(!b)return;const k=b.dataset.act,a=b.dataset.a,b2=b.dataset.b;
+  if(k==='tab'){FV.tab=a;FV.form=null}
+  else if(k==='reset'){FV=JSON.parse(JSON.stringify(FV0));toast('Example reset.')}
+  else if(k==='ok')fvOk(a);else if(k==='no')fvNo(a);
+  else if(k==='remind'){const c=fcl(a),ac=c.accts.find(x=>x.l4===b2);ac.n='Reminder sent today';fmsg(a,'Still needed: October statement for account '+b2);flog('Sent a reminder for account '+b2,a);toast('Reminder sent to '+c.person+'.')}
+  else if(k==='close'){const c=fcl(a),ac=c.accts.find(x=>x.l4===b2);ac.closed='13 Nov 2026';flog('Marked account '+b2+' as closed; it will no longer be requested',a);toast('Account '+b2+' marked closed.')}
+  else if(k==='checkin'){const c=fcl(a);fmsg(a,'Quick check-in: are your details still right?');flog('Sent the periodic check-in ahead of schedule',a);toast('Check-in sent to '+c.person+'.')}
+  else if(k==='seemsgs'){FV.who=a;FV.tab='msgs'}
+  else if(k==='line'){toast('In the real screen this opens the page next to the line whose balance did not carry.',true)}
+  else if(k==='form'){FV.form=a==='x'?null:{k:a,c:b2}}
+  fvRender();
+});
+document.getElementById('firmview').addEventListener('submit',e=>{
+  e.preventDefault();const fm=e.target,c=fm.dataset.c,cl=fcl(c),v=n=>fm.elements[n].value.trim().slice(0,80);
+  if(fm.dataset.form==='acc1'){const l4=v('l4');cl.accts.push({b:v('b'),ty:v('ty'),l4:l4,st:'ok',d:'',n:'Added today'});flog('Added account '+v('b')+' '+l4+' to the master list',c);toast('Account '+l4+' added to the master list.',true)}
+  else if(fm.dataset.form==='req'){fmsg(c,'Request: '+v('what'));flog('Requested additional documents: '+v('what'),c);toast('Request sent to '+cl.person+'.')}
+  else{const l4=v('l4');cl.accts.push({b:v('b'),ty:v('ty'),l4:l4,st:'out',d:'',n:'Added today; October statement requested'});fmsg(c,'October statement needed for account '+l4);flog('Added account '+v('b')+' '+l4+' to the master list and requested its October statement',c);toast('Account '+l4+' added.')}
+  FV.form=null;fvRender();
+});
+document.getElementById('firmview').addEventListener('change',e=>{const s=e.target.closest('[data-sel]');if(!s)return;if(s.dataset.sel==='who')FV.who=s.value;else FV.lw=s.value;fvRender()});
+fvRender();
+
+/* filters */
+function applyFilter(){
+  document.querySelectorAll('[data-id]').forEach(r=>{r.classList.toggle('dim',!hasB(byId[r.dataset.id].b))});
+  document.querySelectorAll('#tlist .tpl').forEach(s=>{s.hidden=!hasB(+s.dataset.b)});
+  document.querySelectorAll('#tidx button').forEach(s=>{s.hidden=!hasB(+s.dataset.b)});
+  document.querySelectorAll('#builds .bbtn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.b==='0'?String(!ACT.size):String(ACT.has(+x.dataset.b))));
+  const d=document.getElementById('bdesc');d.textContent='';
+  if(!ACT.size){d.textContent='Six builds, each a product in its own right. Choose one or more to see only its pieces across the ledger, flow chart, templates and firm view.'}
+  else{[...ACT].sort().forEach(b=>{const s=el('span');s.append(el('b',null,'Build '+b+', '+BUILDS[b].t+': '),document.createTextNode(BUILDS[b].d));d.append(s)})}
+  fvRender();
+}
+(function buildToggles(){
+  const w=document.getElementById('builds');
+  const all=el('button','bbtn all','Everything');all.type='button';all.dataset.b='0';all.addEventListener('click',()=>{ACT.clear();applyFilter()});w.append(all);
+  BUILDS.slice(1).forEach(B=>{const x=el('button','bbtn b'+B.n);x.type='button';x.dataset.b=B.n;x.append(bchip(B.n),document.createTextNode(B.t),el('small',null,String(N.filter(n=>n.b===B.n&&!n.flowOnly&&!n.sub).length)));
+    x.addEventListener('click',()=>{ACT.has(B.n)?ACT.delete(B.n):ACT.add(B.n);applyFilter()});w.append(x)});
+})();
+applyFilter();
+
+/* detail */
+const sheet=document.getElementById('sheet'),shade=document.getElementById('shade');
+let lastFocus=null;
+function block(parent,title,body,cls){
+  if(!body)return;parent.append(el('h3',null,title));
+  const p=el('p',cls||null,body);parent.append(p);
+}
+function show(id){
+  const n=byId[id];if(!n){hide(true);return}
+  const s=stageOf[n.s];
+  const dc=document.getElementById('dc');dc.textContent='';
+  dc.append(document.createTextNode(s.n?('Stage '+s.n+': '+s.name+', '+s.sect.toLowerCase()):s.name));
+  const bl=el('span');bl.style.cssText='display:inline-flex;align-items:center;gap:6px';bl.append(bchip(n.b),document.createTextNode(n.b?'Build '+n.b+': '+BUILDS[n.b].t:'Not scheduled: parked until a build needs it'));dc.append(bl);
+  document.getElementById('dt').textContent=n.t;
+  const db=document.getElementById('db');db.textContent='';db.scrollTop=0;
+  db.append(el('p',null,n.what));
+  if(n.small){db.append(el('h3',null,'Simplest useful version'));db.append(el('p','note core',n.small))}
+  db.append(el('h3',null,n.b?'What build '+n.b+' includes':'What we could build'));
+  const mk=x=>{const arr=Array.isArray(x);let tx=arr?x[0]:x,tag=null;const m=/^(B\d|X)\|/.exec(tx);if(m){tag=m[1];tx=tx.slice(m[0].length)}const li=el('li');if(tag&&tag!=='X')li.append(bchip(+tag[1]),document.createTextNode(' '));if(arr){const a=el('button','lnk',tx);a.type='button';a.addEventListener('click',()=>{location.hash=x[1]});li.append(a)}else li.append(document.createTextNode(tx));return [tag,li]};
+  const own=el('ul'),later=el('ul'),park=el('ul');n.build.forEach(x=>{const r=mk(x);(r[0]==='X'?park:r[0]?later:own).append(r[1])});
+  db.append(own);if(later.children.length)db.append(el('h3',null,'Added by later builds'),later);if(park.children.length)db.append(el('h3',null,'Parked for later'),park);
+  if(n.sched){db.append(el('h3',null,'What is requested, and when'));n.sched.forEach(g=>{db.append(el('p','gl',g.when));const tb=el('table','sch');g.items.forEach(x=>{const tr=el('tr');tr.append(el('td',null,x[0]),el('td','k',x[2]));const td=el('td','t');td.append(bchip(x[1]));tr.append(td);tb.append(tr)});db.append(tb)})}
+  if(n.extra){db.append(el('h3',null,n.extra.h));n.extra.groups.forEach(g=>{const gl=el('p','gl');gl.append(bchip(g.b),document.createTextNode(' Build '+g.b+': '+BUILDS[g.b].t));db.append(gl);const u2=el('ul');g.items.forEach(x=>{const li=el('li',null,x[0]);if(x[1])li.append(el('span','for',' For: '+x[1]));u2.append(li)});db.append(u2)})}
+  if(n.todo){db.append(el('h3',null,'To investigate first'));const u3=el('ul');n.todo.forEach(x=>u3.append(el('li',null,x)));db.append(u3)}
+  if(n.inn||n.out){
+    const io=el('div','io');
+    const a=el('div');a.append(el('b',null,'Takes in'),document.createTextNode(n.inn));
+    const b=el('div');b.append(el('b',null,'Gives out'),document.createTextNode(n.out));
+    io.append(a,b);db.append(el('h3',null,'In and out'),io);
+  }
+  block(db,'Human involvement',n.check,'note chk');
+  block(db,'Heard from the firm',n.heard,'note');
+  block(db,'Still to find out',n.ask,'note');
+  if(n.open){const ob=el('button','exbtn');ob.type='button';ob.append(el('span',null,'🖥️'),el('span',null,n.open[1]));ob.addEventListener('click',()=>{location.hash=n.open[0]});db.append(el('h3',null,'See it'),ob)}
+  const tps=tplOf(n.id);if(tps.length){db.append(el('h3',null,'What this would look like'));tps.forEach(x=>{const eb=el('button','exbtn');eb.type='button';eb.append(el('span',null,'📄'),el('span',null,x.t));eb.addEventListener('click',()=>{location.hash=x.id});db.append(eb)})}
+  const NAV=N.filter(x=>!x.sub);const i=NAV.indexOf(n);let pv=NAV[i-1],nx=NAV[i+1];if(n.sub){pv=byId[n.parent];nx=null}
+  const dp=document.getElementById('dp'),dn=document.getElementById('dn');
+  dp.textContent=pv?'Back: '+pv.t:'Back';dp.disabled=!pv;dp.onclick=()=>{if(pv)location.hash=pv.id};
+  dn.textContent=nx?'Next: '+nx.t:'Next';dn.disabled=!nx;dn.onclick=()=>{if(nx)location.hash=nx.id};
+  document.querySelectorAll('[data-id]').forEach(r=>r.setAttribute('aria-current',r.dataset.id===id?'true':'false'));
+  if(!sheet.classList.contains('on')){lastFocus=document.activeElement}
+  sheet.classList.add('on');shade.classList.add('on');sheet.setAttribute('aria-hidden','false');
+  document.getElementById('dx').focus({preventScroll:true});
+}
+function hide(skipHash){
+  sheet.classList.remove('on');shade.classList.remove('on');sheet.setAttribute('aria-hidden','true');
+  document.querySelectorAll('[data-id]').forEach(r=>r.setAttribute('aria-current','false'));
+  if(!skipHash&&location.hash&&location.hash!=='#'+view){location.hash=view}
+  if(lastFocus&&lastFocus.focus){lastFocus.focus({preventScroll:true});lastFocus=null}
+}
+function route(){const id=location.hash.replace('#','');if(id==='flow'||id==='ledger'||id==='templates'||id==='firm'){setView(id);hide(true)}else if(tplById[id]){setView('templates');hide(true);const s=document.getElementById('sec-'+id);if(s)requestAnimationFrame(()=>s.scrollIntoView({block:'start'}))}else if(byId[id])show(id);else hide(true)}
+document.getElementById('dx').addEventListener('click',()=>hide());
+shade.addEventListener('click',()=>hide());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet.classList.contains('on'))hide()});
+window.addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>
